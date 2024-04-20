@@ -22,3 +22,8 @@ class Logger:
     @classmethod
     def uv_less_than_need(cls, obj: str, channels: int):
         print(f"WARNING: Object \"{obj}\" has uv less than {channels}")
+
+
+    @classmethod
+    def remove_material(cls, material_name: str):
+        print(f"WARNING: Material \"{material_name}\" was removed")

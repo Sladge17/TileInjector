@@ -9,15 +9,27 @@ from logger import Logger
 
 
 def main():
-    sample = Sampler()\
-        .set_filter_by_type(target_type='MESH')\
-        .check_uv(channels=2)
-    if not sample.length:
-        Logger.empty_sample()
-        return
+    # sample = Sampler()\
+    #     .set_filter_by_type(target_type='MESH')\
+    #     .check_uv(channels=2)
+    # if not sample.length:
+    #     Logger.empty_sample()
+    #     return
     
-    for i in sample._objects_names:
-        print(i)
+    # for i in sample._objects_names:
+    #     print(i)
+
+
+
+    material_name = "MatMixedTexture"
+    try:
+        bpy.data.materials.remove(bpy.data.materials.get(material_name))
+        Logger.remove_material(material_name)
+    except TypeError:
+        pass
+    mat = bpy.data.materials.new(material_name)
+
+
 
 
 
