@@ -4,6 +4,8 @@ import os
 script_path = "/home/maxim/Projects/LestaTest"
 script_name = "main.py"
 
+os.environ['SCRIPT_PATH'] = script_path
+
 script_filename = os.path.join("/home/maxim/Projects/LestaTest", "main.py")
 with open(script_filename) as text:
     script = text.read()
