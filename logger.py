@@ -25,5 +25,5 @@ class Logger:
 
 
     @classmethod
-    def remove_material(cls, material_name: str):
-        print(f"WARNING: Material \"{material_name}\" was removed")
+    def remove_material(cls, name: str):
+        print(f"WARNING: Material \"{name}\" was removed")
