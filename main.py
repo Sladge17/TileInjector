@@ -3,42 +3,27 @@ import os
 import sys
 sys.path.append(os.environ['SCRIPT_PATH'])
 
+from sampler import Sampler
 from logger import Logger
 
 
 
-def check_empty_sample(selected_objects):
-    if not len(selected_objects):
-        return True
-    return False
-
-
-def get_selected_meshes():
-    selected_objects = bpy.context.selected_objects
-    if check_empty_sample(selected_objects):
-        Logger.empty_sample()
-        return None
-
-    selected_meshes = []
-    for obj in selected_objects:
-        if not obj.type == 'MESH':
-            Logger.not_mesh(obj)
-            continue
-        selected_meshes.append(obj)
-   
-    return selected_meshes
-
-
 def main():
-    selected_meshes = get_selected_meshes()
-    if not selected_meshes:
+    sample = Sampler()
+    sample.set_filter_by_type('MESH')
+    if not sample.length:
+        Logger.empty_sample()
         return
     
-    for mesh in selected_meshes:
-        print(mesh)
+    for i in sample._objects_names:
+        print(i)
 
 
 
 if __name__ == "__main__":
     main()
     Logger.task_done()
+
+
+
+# bpy.data.meshes['Cube.004'].uv_layers.values()
