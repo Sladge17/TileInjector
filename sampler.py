@@ -51,3 +51,11 @@ class Sampler:
                 self._objects_names.remove(obj_name)
 
         return self
+    
+
+    def set_material(self, material):
+        for obj_name in self._objects_names:
+            bpy.data.meshes[obj_name].materials.clear()
+            bpy.data.meshes[obj_name].materials.append(material.material)
+        
+        return self

@@ -17,13 +17,11 @@ def main():
         Logger.empty_sample()
         return
 
-    mat = Material(
+    material = Material(
         shader='ShaderNodeBsdfPrincipled',
-        name="MatMixedTexture",
+        name="MatMixedTextures",
     ).set_target_shader()
-    for obj_name in sample._objects_names:
-         bpy.data.meshes[obj_name].materials.clear()
-         bpy.data.meshes[obj_name].materials.append(mat.material)
+    sample.set_material(material=material)
 
 
 
