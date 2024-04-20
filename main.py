@@ -9,8 +9,9 @@ from logger import Logger
 
 
 def main():
-    sample = Sampler()
-    sample.set_filter_by_type('MESH')
+    sample = Sampler()\
+        .set_filter_by_type(target_type='MESH')\
+        .check_uv(channels=2)
     if not sample.length:
         Logger.empty_sample()
         return
@@ -23,7 +24,3 @@ def main():
 if __name__ == "__main__":
     main()
     Logger.task_done()
-
-
-
-# bpy.data.meshes['Cube.004'].uv_layers.values()
