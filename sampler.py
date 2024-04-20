@@ -34,6 +34,17 @@ class Sampler:
         return len(self._objects_names)
     
 
+    @staticmethod
+    def _rename_uv(obj_name):
+        for index, value in enumerate(bpy.data.meshes[obj_name].uv_layers.values()[:2]):
+            value.name = f"UV{index + 1}"
+
+
+    def _remove_bad_objects(self, bad_objects):
+        for obj_name in bad_objects:
+            self._objects_names.remove(obj_name)
+    
+    
     def check_uv(self, channels: int):
         if not self._objects_names:
             return self
@@ -41,15 +52,16 @@ class Sampler:
         bad_objects = []
         for obj_name in self._objects_names:
             if len(bpy.data.meshes[obj_name].uv_layers.values()) < channels:
+                Logger.uv_less_than_need(obj_name, channels)
                 bad_objects.append(obj_name)
+                continue
+
             if len(bpy.data.meshes[obj_name].uv_layers.values()) > channels:
                 Logger.uv_more_than_need(obj_name, channels)
+            
+            self._rename_uv(obj_name)
 
-        if bad_objects:
-            for obj_name in bad_objects:
-                Logger.uv_less_than_need(obj_name, channels)
-                self._objects_names.remove(obj_name)
-
+        self._remove_bad_objects(bad_objects)
         return self
     
 
