@@ -62,28 +62,41 @@ class Material:
         return node
     
 
-    def _link_nodes(self, output: list, input: list):
-        for index in range(len(output)):
-           self._links.new(output[index], input[index]) 
+    def _link_nodes(self, outputs: list, inputs: list):
+        for index in range(len(outputs)):
+           self._links.new(outputs[index], inputs[index])
 
     
-    def _set_uv_tex_uniq(self, location: tuple):
+    def _set_uv_tex_uniq(self, location: list):
         node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
         node_uv_map.uv_map = "UV1"
         nodes_tex = self._get_nodes_by_type('TEX_IMAGE')
         self._link_nodes(
             [node_uv_map.outputs[0]] * 4,
             [node_tex.inputs[0] for node_tex in nodes_tex],
-        )        
-    
+        )
+
+
+    def _get_block_uv_tile(self, location: list, scale: float):
+        node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
+        node_uv_map.uv_map = "UV2"
+        location[0] += 300
+        node_math = self._create_node_by_type('ShaderNodeVectorMath', location)
+        node_math.operation = 'MULTIPLY'
+        node_math.inputs[1].default_value = (1,) * 3
+        self._links.new(node_uv_map.outputs[0], node_math.inputs[0])
+        return node_math
+
     
     def set_tex_tile(self):
-        self._set_uv_tex_uniq((-1200, 0))
+        self._set_uv_tex_uniq([-1200, 0])
+        block_uv_tile = self._get_block_uv_tile([-2000, 0], 1.0)
+        node_tex_a = self._create_node_by_type('ShaderNodeTexImage', [-900, 900])
+        node_tex_a.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile0_a.tga"))
+        node_mix = self._create_node_by_type('ShaderNodeMixRGB', [-600, 800])
+        node_rgb = self._create_node_by_type('ShaderNodeRGB', [-1450, 200])
+        node_rgb.outputs[0].default_value = (1, 0, 0, 1)
         return self
-
-
-
-
 
 
 
