@@ -28,16 +28,25 @@ class Material:
     def __init__(self, donor: str, name: str):
         self._remove_material(name)
         self.material = self._get_material(donor, name)
-        
-        
-        
-        
+        self._tex_tile_path = "/home/maxim/Projects/LestaTest/Textures/Tile_textures"
+
         
         # self.material = bpy.data.materials.new(name)
         # self._set_nodespace()
         # self._set_base_shader(shader)
         # self._tex_unic_path = "/home/maxim/Projects/LestaTest/Textures/Object_Textures"
         # self._tex_unic_name = ("Albedo", "Metallic", "Roughness", "Normal")
+
+
+    def fix_tex_normal(self):
+        tex_nodes =\
+            [node.name for node in self.material.node_tree.nodes.values() if "Image Texture" in node.name]
+        for tex_node in tex_nodes:
+            node = self.material.node_tree.nodes[tex_node]
+            if "normal" in node.image.name.split('.')[0].lower():
+                node.image.colorspace_settings.name = 'Non-Color'
+
+        return self
 
 
     

@@ -23,7 +23,7 @@ def main():
     material = Material(
         donor=sample.first_name,
         name="MODE_Material",
-    )
+    ).fix_tex_normal()
     sample.set_material(material=material)
 
 
