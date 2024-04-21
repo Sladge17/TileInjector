@@ -27,8 +27,3 @@ class Logger:
     @classmethod
     def remove_material(cls, name: str):
         print(f"WARNING: Material \"{name}\" was removed")
-
-
-    @classmethod
-    def tex_wrong_name(cls, tex_name: str):
-        print(f"ERROR: Texture {tex_name} has wrong name")

@@ -3,26 +3,6 @@ from os import path as osp
 from logger import Logger
 
 
-def check_donor_soft(donor) -> bool:
-    material_name = bpy.data.meshes[donor].materials.values()[0].name
-    material = bpy.data.meshes[donor].materials[material_name]
-    tex_nodes =\
-        [node.name for node in material.node_tree.nodes.values() if "Image Texture" in node.name]
-    
-    tex_references = ("Albedo", "Metallic", "Roughness", "Normal")
-    for tex_node in tex_nodes:
-        tex_name =\
-            bpy.data.meshes[donor].materials[material_name].node_tree.nodes[tex_node].image.name.split('.')[0]
-        
-        for reference in tex_references:
-            if reference in tex_name:
-                break
-        else:
-            Logger.tex_wrong_name(tex_name)
-            return False
-        
-    return True
-
 
 class Material:
     def __init__(self, donor: str, name: str):

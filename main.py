@@ -5,7 +5,7 @@ sys.path.append(os.environ['SCRIPT_PATH'])
 
 from sampler import Sampler
 from logger import Logger
-from material import Material, check_donor_soft
+from material import Material
 
 
 
@@ -17,9 +17,6 @@ def main():
         Logger.empty_sample()
         return
     
-    if not check_donor_soft(sample.first_name):
-        return
-
     material = Material(
         donor=sample.first_name,
         name="MODE_Material",
