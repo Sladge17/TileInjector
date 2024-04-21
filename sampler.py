@@ -34,6 +34,11 @@ class Sampler:
         return len(self._objects_names)
     
 
+    @property
+    def first_name(self) -> str:
+        return self._objects_names[0]
+    
+
     @staticmethod
     def _rename_uv(obj_name):
         for index, value in enumerate(bpy.data.meshes[obj_name].uv_layers.values()[:2]):
