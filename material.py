@@ -49,7 +49,7 @@ class Material:
     def fix_tex_normal(self):
         nodes = self._get_nodes_by_type('TEX_IMAGE')
         for node in nodes:
-            if "normal" in node.image.name.split('.')[0].lower():
+            if "normal" in node.image.name.lower():
                 node.image.colorspace_settings.name = 'Non-Color'
                 break
 
@@ -67,13 +67,32 @@ class Material:
            self._links.new(outputs[index], inputs[index])
 
     
-    def _set_uv_tex_uniq(self, location: list):
+    def _get_nodes_tex_uniq_sorted(self) -> list:
+        nodes_tex_uniq = self._get_nodes_by_type('TEX_IMAGE')
+        nodes_tex_uniq_sorted = [None] * 4
+        for node in nodes_tex_uniq:
+            if "albedo" in node.image.name.lower():
+                nodes_tex_uniq_sorted[0] = node
+                continue
+
+            if "metallic" in node.image.name.lower():
+                nodes_tex_uniq_sorted[1] = node
+                continue            
+
+            if "roughness" in node.image.name.lower():
+                nodes_tex_uniq_sorted[2] = node
+                continue
+
+            nodes_tex_uniq_sorted[3] = node
+            return nodes_tex_uniq_sorted 
+
+
+    def _set_uv_tex_uniq(self, nodes_tex_uniq: list, location: list):
         node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
         node_uv_map.uv_map = "UV1"
-        nodes_tex = self._get_nodes_by_type('TEX_IMAGE')
         self._link_nodes(
             [node_uv_map.outputs[0]] * 4,
-            [node_tex.inputs[0] for node_tex in nodes_tex],
+            [node_tex.inputs[0] for node_tex in nodes_tex_uniq],
         )
 
 
@@ -89,8 +108,11 @@ class Material:
 
     
     def set_tex_tile(self):
-        self._set_uv_tex_uniq([-1200, 0])
+        nodes_tex_uniq_sorted = self._get_nodes_tex_uniq_sorted() # sort nodes TexImages like: [Albedo, Metallic, Roughness, Normal]
+        self._set_uv_tex_uniq(nodes_tex_uniq_sorted, [-1200, 0])
         block_uv_tile = self._get_block_uv_tile([-2000, 0], 1.0)
+
+
         node_tex_a = self._create_node_by_type('ShaderNodeTexImage', [-900, 900])
         node_tex_a.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile0_a.tga"))
         node_mix = self._create_node_by_type('ShaderNodeMixRGB', [-600, 800])
