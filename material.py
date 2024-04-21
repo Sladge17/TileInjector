@@ -5,13 +5,19 @@ from logger import Logger
 
 
 class Material:
-    def __init__(self, shader: str, name: str):
+    def __init__(self, donor: str, name: str):
         self._remove_material(name)
-        self.material = bpy.data.materials.new(name)
-        self._set_nodespace()
-        self._set_base_shader(shader)
-        self._tex_unic_path = "/home/maxim/Projects/LestaTest/Textures/Object_Textures"
-        self._tex_unic_name = ("Albedo", "Metallic", "Roughness", "Normal")
+        self.material = self._get_material(donor, name)
+        
+        
+        
+        
+        
+        # self.material = bpy.data.materials.new(name)
+        # self._set_nodespace()
+        # self._set_base_shader(shader)
+        # self._tex_unic_path = "/home/maxim/Projects/LestaTest/Textures/Object_Textures"
+        # self._tex_unic_name = ("Albedo", "Metallic", "Roughness", "Normal")
 
 
     @staticmethod
@@ -21,6 +27,14 @@ class Material:
             Logger.remove_material(name)
         except TypeError:
             pass
+
+
+    @staticmethod
+    def _get_material(donor: str, name: str):
+        donor_material_name = bpy.data.meshes[donor].materials.values()[0].name
+        material = bpy.data.meshes[donor].materials[donor_material_name].copy()
+        material.name = name
+        return material       
 
 
     def _set_nodespace(self):

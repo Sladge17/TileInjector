@@ -16,11 +16,11 @@ def main():
     if not sample.length:
         Logger.empty_sample()
         return
-
+    
     material = Material(
-        shader='ShaderNodeBsdfPrincipled',
-        name="MatMixedTextures",
-    ).set_target_shader()
+        donor=sample.first_name,
+        name="MODE_Material",
+    )
     sample.set_material(material=material)
 
 
