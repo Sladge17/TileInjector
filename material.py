@@ -62,9 +62,9 @@ class Material:
         return node
     
 
-    def _link_nodes(self, outputs: list, inputs: list):
-        for index in range(len(outputs)):
-           self._links.new(outputs[index], inputs[index])
+    def _link_nodes(self, links: list):
+        for link in links:
+            self._links.new(link[0], link[1])
 
     
     def _get_nodes_tex_uniq_sorted(self) -> list:
@@ -91,8 +91,12 @@ class Material:
         node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
         node_uv_map.uv_map = "UV1"
         self._link_nodes(
-            [node_uv_map.outputs[0]] * 4,
-            [node_tex.inputs[0] for node_tex in nodes_tex_uniq],
+            [
+                [node_uv_map.outputs[0], nodes_tex_uniq[0].inputs[0]],
+                [node_uv_map.outputs[0], nodes_tex_uniq[1].inputs[0]],
+                [node_uv_map.outputs[0], nodes_tex_uniq[2].inputs[0]],
+                [node_uv_map.outputs[0], nodes_tex_uniq[3].inputs[0]],
+            ]
         )
 
 
@@ -111,7 +115,6 @@ class Material:
         nodes_tex_uniq_sorted = self._get_nodes_tex_uniq_sorted() # sort nodes TexImages like: [Albedo, Metallic, Roughness, Normal]
         self._set_uv_tex_uniq(nodes_tex_uniq_sorted, [-1200, 0])
         block_uv_tile = self._get_block_uv_tile([-2000, 0], 1.0)
-
 
         node_tex_a = self._create_node_by_type('ShaderNodeTexImage', [-900, 900])
         node_tex_a.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile0_a.tga"))
