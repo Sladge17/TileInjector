@@ -92,10 +92,10 @@ class Material:
         node_uv_map.uv_map = "UV1"
         self._link_nodes(
             [
-                [node_uv_map.outputs[0], nodes_tex_uniq[0].inputs[0]],
-                [node_uv_map.outputs[0], nodes_tex_uniq[1].inputs[0]],
-                [node_uv_map.outputs[0], nodes_tex_uniq[2].inputs[0]],
-                [node_uv_map.outputs[0], nodes_tex_uniq[3].inputs[0]],
+                [node_uv_map.outputs['UV'], nodes_tex_uniq[0].inputs['Vector']],
+                [node_uv_map.outputs['UV'], nodes_tex_uniq[1].inputs['Vector']],
+                [node_uv_map.outputs['UV'], nodes_tex_uniq[2].inputs['Vector']],
+                [node_uv_map.outputs['UV'], nodes_tex_uniq[3].inputs['Vector']],
             ]
         )
 
@@ -107,7 +107,7 @@ class Material:
         node_math = self._create_node_by_type('ShaderNodeVectorMath', location)
         node_math.operation = 'MULTIPLY'
         node_math.inputs[1].default_value = (1,) * 3
-        self._links.new(node_uv_map.outputs[0], node_math.inputs[0])
+        self._links.new(node_uv_map.outputs['UV'], node_math.inputs['Vector'])
         return node_math
 
     
@@ -120,7 +120,21 @@ class Material:
         node_tex_a.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile0_a.tga"))
         node_mix = self._create_node_by_type('ShaderNodeMixRGB', [-600, 800])
         node_rgb = self._create_node_by_type('ShaderNodeRGB', [-1450, 200])
-        node_rgb.outputs[0].default_value = (1, 0, 0, 1)
+        node_rgb.outputs['Color'].default_value = (1, 0, 0, 1)
+
+
+        # print(nodes_tex_uniq_sorted[0].outputs[0])
+        # nodes_tex_uniq_sorted[0].outputs[0] = None
+
+        self._link_nodes(
+            [
+                [block_uv_tile.outputs['Vector'], node_tex_a.inputs[0]],
+                [node_rgb.outputs['Color'], node_mix.inputs['Fac']],
+                # [nodes_tex_uniq_sorted[0].outputs[0], node_mix.inputs[1]]
+                [node_tex_a.outputs['Color'], node_mix.inputs['Color2']],
+            ]
+        )
+
         return self
 
 
