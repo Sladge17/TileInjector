@@ -19,16 +19,17 @@ class Material:
 
 
     def fix_tex_normal(self):
-        tex_nodes =\
-            [node.name for node in self.material.node_tree.nodes.values() if "Image Texture" in node.name]
-        for tex_node in tex_nodes:
-            node = self.material.node_tree.nodes[tex_node]
+        nodes = self._get_nodes_by_type('TEX_IMAGE')
+        for node in nodes:
             if "normal" in node.image.name.split('.')[0].lower():
                 node.image.colorspace_settings.name = 'Non-Color'
+                break
 
         return self
 
-
+        
+    def _get_nodes_by_type(self, node_type: str):
+        return [node for node in self.material.node_tree.nodes.values() if node.type == node_type]
     
     
     @staticmethod
