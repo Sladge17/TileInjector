@@ -10,7 +10,6 @@ class Material:
         self.material = self._get_material(donor, name)
         self._set_nodespace()
         self._tex_tile_path = "/home/maxim/Projects/LestaTest/Textures/Tile_textures"
-        self._scale_tile = 1.0
 
 
     @staticmethod
@@ -96,7 +95,7 @@ class Material:
         location[0] += 300
         node_math = self._create_node_by_type('ShaderNodeVectorMath', location)
         node_math.operation = 'MULTIPLY'
-        node_math.inputs[1].default_value = (1,) * 3
+        node_math.inputs[1].default_value = (scale,) * 3
         self._links.new(node_uv_map.outputs['UV'], node_math.inputs['Vector'])
         return node_math
     
@@ -190,11 +189,18 @@ class Material:
         self._links.new(nodes_outputs['Normal'].outputs['Color'], node_normal.inputs['Color'])
 
     
-    def set_tex_tile(self):
+    def set_tex_tile(
+            self,
+            tile_albedo_1="",
+            tile_albedo_2="",
+            tile_albedo_3="",
+            tile_albedo_4="",
+            scale=2.0
+        ):
         nodes_tex_uniq = self._get_nodes_tex_uniq()
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])
-        block_uv_tile = self._get_block_uv_tile([-2000, 0], self._scale_tile)        
+        block_uv_tile = self._get_block_uv_tile([-2000, 0], scale)        
         self._set_nodes_tex_uniq_mixed(nodes_tex_uniq, block_uv_tile)
         self._set_links_shader(nodes_tex_uniq)
         return self
