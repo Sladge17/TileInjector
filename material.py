@@ -56,39 +56,39 @@ class Material:
         return node
 
     
-    def _get_nodes_tex_uniq_sorted(self) -> list:
+    def _get_nodes_tex_uniq(self) -> dict:
         nodes_tex_uniq = self._get_nodes_by_type('TEX_IMAGE')
-        nodes_tex_uniq_sorted = [None] * 4
+        nodes_tex_uniq_sorted = {}
         for node in nodes_tex_uniq:
             if "albedo" in node.image.name.lower():
-                nodes_tex_uniq_sorted[0] = node
+                nodes_tex_uniq_sorted['Albedo'] = node
                 continue
 
             if "metallic" in node.image.name.lower():
-                nodes_tex_uniq_sorted[1] = node
+                nodes_tex_uniq_sorted['Metallic'] = node
                 continue            
 
             if "roughness" in node.image.name.lower():
-                nodes_tex_uniq_sorted[2] = node
+                nodes_tex_uniq_sorted['Roughness'] = node
                 continue
 
-            nodes_tex_uniq_sorted[3] = node
+            nodes_tex_uniq_sorted['Normal'] = node
             return nodes_tex_uniq_sorted 
 
 
-    def _unlink_nodes_tex_uniq(self, nodes_tex_uniq: list):
-        for node in nodes_tex_uniq:
+    def _unlink_nodes_tex_uniq(self, nodes_tex_uniq: dict):
+        for node in nodes_tex_uniq.values():
             self._links.remove(node.outputs['Color'].links[0])
 
     
     
-    def _set_uv_tex_uniq(self, nodes_tex_uniq: list, location: list):
+    def _set_uv_tex_uniq(self, nodes_tex_uniq: dict, location: list):
         node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
         node_uv_map.uv_map = "UV1"
-        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq[0].inputs['Vector'])
-        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq[1].inputs['Vector'])
-        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq[2].inputs['Vector'])
-        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq[3].inputs['Vector'])
+        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq['Albedo'].inputs['Vector'])
+        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq['Metallic'].inputs['Vector'])
+        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq['Roughness'].inputs['Vector'])
+        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq['Normal'].inputs['Vector'])
 
 
     def _get_block_uv_tile(self, location: list, scale: float):
@@ -107,16 +107,16 @@ class Material:
         return [origin[0] + shift_x, origin[1] + shift_y]
     
     
-    def _get_blocks_mixed_tex(self, nodes_tex_uniq_sorted: list, block_uv_tile) -> list:
-        albedo_active = nodes_tex_uniq_sorted[0]
-        metallic_active = nodes_tex_uniq_sorted[1]
-        roughness_acctive = nodes_tex_uniq_sorted[2]
-        normal_active = nodes_tex_uniq_sorted[3]
+    def _get_blocks_mixed_tex(self, nodes_tex_uniq: dict, block_uv_tile) -> list:
+        albedo_active = nodes_tex_uniq['Albedo']
+        metallic_active = nodes_tex_uniq['Metallic']
+        roughness_acctive = nodes_tex_uniq['Roughness']
+        normal_active = nodes_tex_uniq['Normal']
         mask_colors = (
-            (1, 0, 0, 1),
-            (0, 1, 0, 1),
-            (0, 0, 1, 1),
-            (0, 0, 0, 1),
+            (1, 0, 0, 1), # color Red
+            (0, 1, 0, 1), # color Green
+            (0, 0, 1, 1), # color Blue
+            (0, 0, 0, 1), # color Black
         )
 
         origin_node_rgb = [-1450, 200]
@@ -198,13 +198,13 @@ class Material:
 
     
     def set_tex_tile(self):
-        nodes_tex_uniq_sorted = self._get_nodes_tex_uniq_sorted() # sort nodes TexImages like: [Albedo, Metallic, Roughness, Normal]
-        self._unlink_nodes_tex_uniq(nodes_tex_uniq_sorted)
-        self._set_uv_tex_uniq(nodes_tex_uniq_sorted, [-1200, 0])
+        nodes_tex_uniq = self._get_nodes_tex_uniq()
+        self._unlink_nodes_tex_uniq(nodes_tex_uniq)
+        self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])
         block_uv_tile = self._get_block_uv_tile([-2000, 0], self._scale_tile)
 
         
-        nodes_outputs = self._get_blocks_mixed_tex(nodes_tex_uniq_sorted, block_uv_tile)
+        nodes_outputs = self._get_blocks_mixed_tex(nodes_tex_uniq, block_uv_tile)
         self._set_links_shader(nodes_outputs)
 
         return self
