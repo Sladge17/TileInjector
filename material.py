@@ -162,19 +162,23 @@ class Material:
         self._links.new(nodes_tex_uniq_sorted[2].outputs['Color'], node_mix_3.inputs['Color1'])
         self._links.new(node_tex.outputs['Alpha'], node_mix_3.inputs['Color2'])
 
+
+        #---------------------
+        node_shader = self._get_nodes_by_type('BSDF_PRINCIPLED')[0]
+        node_normal = self._get_nodes_by_type('NORMAL_MAP')[0]
+
+        self._links.new(node_mix_1.outputs['Color'], node_shader.inputs['Base Color'])
+        self._links.new(node_mix_2.outputs['Color'], node_shader.inputs['Metallic'])
+        self._links.new(node_mix_3.outputs['Color'], node_shader.inputs['Roughness'])
+        self._links.new(node_mix_4.outputs['Color'], node_normal.inputs['Color'])
+
         return self
 
 
 
+# 'BSDF_PRINCIPLED'
 
-
-
-
-
-
-
-
-
+# 'NORMAL_MAP'
 
 
 
