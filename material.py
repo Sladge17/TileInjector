@@ -112,6 +112,16 @@ class Material:
         node_math.inputs[1].default_value = (1,) * 3
         self._links.new(node_uv_map.outputs['UV'], node_math.inputs['Vector'])
         return node_math
+    
+
+    def _set_links_shader(self, nodes_outputs: list):
+        node_shader = self._get_nodes_by_type('BSDF_PRINCIPLED')[0]
+        node_normal = self._get_nodes_by_type('NORMAL_MAP')[0]
+
+        self._links.new(nodes_outputs[0].outputs['Color'], node_shader.inputs['Base Color'])
+        self._links.new(nodes_outputs[1].outputs['Color'], node_shader.inputs['Metallic'])
+        self._links.new(nodes_outputs[2].outputs['Color'], node_shader.inputs['Roughness'])
+        self._links.new(nodes_outputs[3].outputs['Color'], node_normal.inputs['Color'])
 
     
     def set_tex_tile(self):
@@ -163,14 +173,8 @@ class Material:
         self._links.new(node_tex.outputs['Alpha'], node_mix_3.inputs['Color2'])
 
 
-        #---------------------
-        node_shader = self._get_nodes_by_type('BSDF_PRINCIPLED')[0]
-        node_normal = self._get_nodes_by_type('NORMAL_MAP')[0]
-
-        self._links.new(node_mix_1.outputs['Color'], node_shader.inputs['Base Color'])
-        self._links.new(node_mix_2.outputs['Color'], node_shader.inputs['Metallic'])
-        self._links.new(node_mix_3.outputs['Color'], node_shader.inputs['Roughness'])
-        self._links.new(node_mix_4.outputs['Color'], node_normal.inputs['Color'])
+        nodes_outputs = [node_mix_1, node_mix_2, node_mix_3, node_mix_4]
+        self._set_links_shader(nodes_outputs)
 
         return self
 
