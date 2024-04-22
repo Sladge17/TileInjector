@@ -62,9 +62,9 @@ class Material:
         return node
     
 
-    def _link_nodes(self, links: list):
-        for link in links:
-            self._links.new(link[0], link[1])
+    # def _link_nodes(self, links: list):
+    #     for link in links:
+    #         self._links.new(link[0], link[1])
 
     
     def _get_nodes_tex_uniq_sorted(self) -> list:
@@ -87,17 +87,19 @@ class Material:
             return nodes_tex_uniq_sorted 
 
 
+    def _unlink_nodes_tex_uniq(self, nodes_tex_uniq: list):
+        for node in nodes_tex_uniq:
+            self._links.remove(node.outputs['Color'].links[0])
+
+    
+    
     def _set_uv_tex_uniq(self, nodes_tex_uniq: list, location: list):
         node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
         node_uv_map.uv_map = "UV1"
-        self._link_nodes(
-            [
-                [node_uv_map.outputs['UV'], nodes_tex_uniq[0].inputs['Vector']],
-                [node_uv_map.outputs['UV'], nodes_tex_uniq[1].inputs['Vector']],
-                [node_uv_map.outputs['UV'], nodes_tex_uniq[2].inputs['Vector']],
-                [node_uv_map.outputs['UV'], nodes_tex_uniq[3].inputs['Vector']],
-            ]
-        )
+        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq[0].inputs['Vector'])
+        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq[1].inputs['Vector'])
+        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq[2].inputs['Vector'])
+        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq[3].inputs['Vector'])
 
 
     def _get_block_uv_tile(self, location: list, scale: float):
@@ -113,6 +115,7 @@ class Material:
     
     def set_tex_tile(self):
         nodes_tex_uniq_sorted = self._get_nodes_tex_uniq_sorted() # sort nodes TexImages like: [Albedo, Metallic, Roughness, Normal]
+        self._unlink_nodes_tex_uniq(nodes_tex_uniq_sorted)
         self._set_uv_tex_uniq(nodes_tex_uniq_sorted, [-1200, 0])
         block_uv_tile = self._get_block_uv_tile([-2000, 0], 1.0)
 
@@ -122,18 +125,12 @@ class Material:
         node_rgb = self._create_node_by_type('ShaderNodeRGB', [-1450, 200])
         node_rgb.outputs['Color'].default_value = (1, 0, 0, 1)
 
+        
 
-        # print(nodes_tex_uniq_sorted[0].outputs[0])
-        # nodes_tex_uniq_sorted[0].outputs[0] = None
-
-        self._link_nodes(
-            [
-                [block_uv_tile.outputs['Vector'], node_tex_a.inputs[0]],
-                [node_rgb.outputs['Color'], node_mix.inputs['Fac']],
-                # [nodes_tex_uniq_sorted[0].outputs[0], node_mix.inputs[1]]
-                [node_tex_a.outputs['Color'], node_mix.inputs['Color2']],
-            ]
-        )
+        self._links.new(block_uv_tile.outputs['Vector'], node_tex_a.inputs[0])
+        self._links.new(node_rgb.outputs['Color'], node_mix.inputs['Fac'])
+        self._links.new(nodes_tex_uniq_sorted[0].outputs['Color'], node_mix.inputs['Color1'])
+        self._links.new(node_tex_a.outputs['Color'], node_mix.inputs['Color2'])
 
         return self
 
