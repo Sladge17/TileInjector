@@ -81,7 +81,6 @@ class Material:
             self._links.remove(node.outputs['Color'].links[0])
 
     
-    
     def _set_uv_tex_uniq(self, nodes_tex_uniq: dict, location: list):
         node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
         node_uv_map.uv_map = "UV1"
@@ -107,6 +106,52 @@ class Material:
         return [origin[0] + shift_x, origin[1] + shift_y]
     
     
+    def _set_nodes_tex_uniq_mixed_by_block(
+            self,
+            block: str,
+            origin: list,
+            block_uv_tile,
+            node_rgb,
+            nodes_tex_uniq,
+            index: int,
+        ):
+        node_tex = self._create_node_by_type('ShaderNodeTexImage', origin)
+        node_tex.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile{index}_{block}.tga"))            
+        node_mix_1 = self._create_node_by_type(
+            'ShaderNodeMixRGB', self._get_shifted_origin(origin, 300, 50)
+        )
+        node_mix_2 = self._create_node_by_type(
+            'ShaderNodeMixRGB', self._get_shifted_origin(origin, 300, -150)
+        )
+
+        self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
+        
+        if block == 'a':
+            self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Fac'])
+            self._links.new(nodes_tex_uniq['Albedo'].outputs['Color'], node_mix_1.inputs['Color1'])
+            self._links.new(node_tex.outputs['Color'], node_mix_1.inputs['Color2'])
+
+            self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Fac'])
+            self._links.new(nodes_tex_uniq['Metallic'].outputs['Color'], node_mix_2.inputs['Color1'])
+            self._links.new(node_tex.outputs['Alpha'], node_mix_2.inputs['Color2'])
+
+            nodes_tex_uniq['Albedo'] = node_mix_1
+            nodes_tex_uniq['Metallic'] = node_mix_2
+            return
+        
+        self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Fac'])
+        self._links.new(nodes_tex_uniq['Normal'].outputs['Color'], node_mix_2.inputs['Color1'])
+        self._links.new(node_tex.outputs['Color'], node_mix_2.inputs['Color2'])
+
+        self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Fac'])
+        self._links.new(nodes_tex_uniq['Roughness'].outputs['Color'], node_mix_1.inputs['Color1'])
+        self._links.new(node_tex.outputs['Alpha'], node_mix_1.inputs['Color2'])
+
+        nodes_tex_uniq['Roughness'] = node_mix_1
+        nodes_tex_uniq['Normal'] = node_mix_2
+        node_tex.image.colorspace_settings.name = 'Non-Color'
+
+    
     def _set_nodes_tex_uniq_mixed(self, nodes_tex_uniq: dict, block_uv_tile) -> dict:
         mask_colors = (
             (1, 0, 0, 1), # color Red
@@ -122,57 +167,17 @@ class Material:
         for index in range(2):
             node_rgb = self._create_node_by_type('ShaderNodeRGB', origin_node_rgb)
             node_rgb.outputs['Color'].default_value = mask_colors[index]
-        
-            node_tex = self._create_node_by_type('ShaderNodeTexImage', origin_block_a)
-            node_tex.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile{index}_a.tga"))            
-            node_mix_1 = self._create_node_by_type(
-                'ShaderNodeMixRGB', self._get_shifted_origin(origin_block_a, 300, 50)
+
+            self._set_nodes_tex_uniq_mixed_by_block(
+                'a', origin_block_a, block_uv_tile, node_rgb, nodes_tex_uniq, index
             )
-            node_mix_2 = self._create_node_by_type(
-                'ShaderNodeMixRGB', self._get_shifted_origin(origin_block_a, 300, -150)
+            self._set_nodes_tex_uniq_mixed_by_block(
+                'n', origin_block_n, block_uv_tile, node_rgb, nodes_tex_uniq, index
             )
-
-            self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
-        
-            self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Fac'])
-            self._links.new(nodes_tex_uniq['Albedo'].outputs['Color'], node_mix_1.inputs['Color1'])
-            self._links.new(node_tex.outputs['Color'], node_mix_1.inputs['Color2'])
-
-            self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Fac'])
-            self._links.new(nodes_tex_uniq['Metallic'].outputs['Color'], node_mix_2.inputs['Color1'])
-            self._links.new(node_tex.outputs['Alpha'], node_mix_2.inputs['Color2'])
-
-
-            node_tex = self._create_node_by_type('ShaderNodeTexImage', origin_block_n)
-            node_tex.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile{index}_n.tga"))
-            node_tex.image.colorspace_settings.name = 'Non-Color'
-            
-            node_mix_3 = self._create_node_by_type(
-                'ShaderNodeMixRGB', self._get_shifted_origin(origin_block_n, 300, 50)
-            )
-            node_mix_4 = self._create_node_by_type(
-                'ShaderNodeMixRGB', self._get_shifted_origin(origin_block_n, 300, -150)
-            )
-
-            self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
-            
-            self._links.new(node_rgb.outputs['Color'], node_mix_4.inputs['Fac'])
-            self._links.new(nodes_tex_uniq['Normal'].outputs['Color'], node_mix_4.inputs['Color1'])
-            self._links.new(node_tex.outputs['Color'], node_mix_4.inputs['Color2'])
-
-            self._links.new(node_rgb.outputs['Color'], node_mix_3.inputs['Fac'])
-            self._links.new(nodes_tex_uniq['Roughness'].outputs['Color'], node_mix_3.inputs['Color1'])
-            self._links.new(node_tex.outputs['Alpha'], node_mix_3.inputs['Color2'])
-
             
             origin_node_rgb = self._get_shifted_origin(origin_node_rgb, 0, -200)
             origin_block_a = self._get_shifted_origin(origin_block_a, 0, 400)
             origin_block_n = self._get_shifted_origin(origin_block_n, 0, -400)
-
-            nodes_tex_uniq['Albedo'] = node_mix_1
-            nodes_tex_uniq['Metallic'] = node_mix_2
-            nodes_tex_uniq['Roughness'] = node_mix_3
-            nodes_tex_uniq['Normal'] = node_mix_4
 
         
     def _set_links_shader(self, nodes_outputs: dict):
