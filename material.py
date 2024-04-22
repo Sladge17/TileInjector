@@ -135,7 +135,7 @@ class Material:
         origin_block_a = [-900, 850]
         origin_block_n = [-900, -750]
 
-        for index in range(1):
+        for index in range(2):
             node_rgb = self._create_node_by_type('ShaderNodeRGB', origin_node_rgb)
             node_rgb.outputs['Color'].default_value = mask_colors[index]
         
@@ -179,6 +179,16 @@ class Material:
             self._links.new(node_rgb.outputs['Color'], node_mix_3.inputs['Fac'])
             self._links.new(roughness_acctive.outputs['Color'], node_mix_3.inputs['Color1'])
             self._links.new(node_tex.outputs['Alpha'], node_mix_3.inputs['Color2'])
+
+            
+            origin_node_rgb = self._get_shifted_origin(origin_node_rgb, 0, -200)
+            origin_block_a = self._get_shifted_origin(origin_block_a, 0, 400)
+            origin_block_n = self._get_shifted_origin(origin_block_n, 0, -400)
+
+            albedo_active = node_mix_1
+            metallic_active = node_mix_2
+            roughness_acctive = node_mix_3
+            normal_active = node_mix_4
 
         
         return [node_mix_1, node_mix_2, node_mix_3, node_mix_4]
