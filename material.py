@@ -113,7 +113,11 @@ class Material:
         self._links.new(node_uv_map.outputs['UV'], node_math.inputs['Vector'])
         return node_math
     
-
+    
+    @staticmethod
+    def _get_shifted_origin(origin: list, shift_x: int, shift_y: int) -> list:
+        return [origin[0] + shift_x, origin[1] + shift_y]
+    
     
     def _get_blocks_mixed_tex(self, nodes_tex_uniq_sorted: list, block_uv_tile) -> list:
         albedo_active = nodes_tex_uniq_sorted[0]
@@ -127,15 +131,22 @@ class Material:
             (0, 0, 0, 1),
         )
 
+        origin_node_rgb = [-1450, 200]
+        origin_block_a = [-900, 850]
+        origin_block_n = [-900, -750]
+
         for index in range(1):
-            node_rgb = self._create_node_by_type('ShaderNodeRGB', [-1450, 200])
+            node_rgb = self._create_node_by_type('ShaderNodeRGB', origin_node_rgb)
             node_rgb.outputs['Color'].default_value = mask_colors[index]
         
-            node_tex = self._create_node_by_type('ShaderNodeTexImage', [-900, 850])
-            node_tex.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile{index}_a.tga"))
-            
-            node_mix_1 = self._create_node_by_type('ShaderNodeMixRGB', [-600, 900])
-            node_mix_2 = self._create_node_by_type('ShaderNodeMixRGB', [-600, 700])
+            node_tex = self._create_node_by_type('ShaderNodeTexImage', origin_block_a)
+            node_tex.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile{index}_a.tga"))            
+            node_mix_1 = self._create_node_by_type(
+                'ShaderNodeMixRGB', self._get_shifted_origin(origin_block_a, 300, 50)
+            )
+            node_mix_2 = self._create_node_by_type(
+                'ShaderNodeMixRGB', self._get_shifted_origin(origin_block_a, 300, -150)
+            )
 
             self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
         
@@ -148,12 +159,16 @@ class Material:
             self._links.new(node_tex.outputs['Alpha'], node_mix_2.inputs['Color2'])
 
 
-            node_tex = self._create_node_by_type('ShaderNodeTexImage', [-900, -750])
+            node_tex = self._create_node_by_type('ShaderNodeTexImage', origin_block_n)
             node_tex.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile{index}_n.tga"))
             node_tex.image.colorspace_settings.name = 'Non-Color'
             
-            node_mix_3 = self._create_node_by_type('ShaderNodeMixRGB', [-600, -700])
-            node_mix_4 = self._create_node_by_type('ShaderNodeMixRGB', [-600, -900])
+            node_mix_3 = self._create_node_by_type(
+                'ShaderNodeMixRGB', self._get_shifted_origin(origin_block_n, 300, 50)
+            )
+            node_mix_4 = self._create_node_by_type(
+                'ShaderNodeMixRGB', self._get_shifted_origin(origin_block_n, 300, -150)
+            )
 
             self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
             
