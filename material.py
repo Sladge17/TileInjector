@@ -107,11 +107,7 @@ class Material:
         return [origin[0] + shift_x, origin[1] + shift_y]
     
     
-    def _get_blocks_mixed_tex(self, nodes_tex_uniq: dict, block_uv_tile) -> list:
-        albedo_active = nodes_tex_uniq['Albedo']
-        metallic_active = nodes_tex_uniq['Metallic']
-        roughness_acctive = nodes_tex_uniq['Roughness']
-        normal_active = nodes_tex_uniq['Normal']
+    def _set_nodes_tex_uniq_mixed(self, nodes_tex_uniq: dict, block_uv_tile) -> dict:
         mask_colors = (
             (1, 0, 0, 1), # color Red
             (0, 1, 0, 1), # color Green
@@ -139,11 +135,11 @@ class Material:
             self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
         
             self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Fac'])
-            self._links.new(albedo_active.outputs['Color'], node_mix_1.inputs['Color1'])
+            self._links.new(nodes_tex_uniq['Albedo'].outputs['Color'], node_mix_1.inputs['Color1'])
             self._links.new(node_tex.outputs['Color'], node_mix_1.inputs['Color2'])
 
             self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Fac'])
-            self._links.new(metallic_active.outputs['Color'], node_mix_2.inputs['Color1'])
+            self._links.new(nodes_tex_uniq['Metallic'].outputs['Color'], node_mix_2.inputs['Color1'])
             self._links.new(node_tex.outputs['Alpha'], node_mix_2.inputs['Color2'])
 
 
@@ -161,11 +157,11 @@ class Material:
             self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
             
             self._links.new(node_rgb.outputs['Color'], node_mix_4.inputs['Fac'])
-            self._links.new(normal_active.outputs['Color'], node_mix_4.inputs['Color1'])
+            self._links.new(nodes_tex_uniq['Normal'].outputs['Color'], node_mix_4.inputs['Color1'])
             self._links.new(node_tex.outputs['Color'], node_mix_4.inputs['Color2'])
 
             self._links.new(node_rgb.outputs['Color'], node_mix_3.inputs['Fac'])
-            self._links.new(roughness_acctive.outputs['Color'], node_mix_3.inputs['Color1'])
+            self._links.new(nodes_tex_uniq['Roughness'].outputs['Color'], node_mix_3.inputs['Color1'])
             self._links.new(node_tex.outputs['Alpha'], node_mix_3.inputs['Color2'])
 
             
@@ -173,38 +169,27 @@ class Material:
             origin_block_a = self._get_shifted_origin(origin_block_a, 0, 400)
             origin_block_n = self._get_shifted_origin(origin_block_n, 0, -400)
 
-            albedo_active = node_mix_1
-            metallic_active = node_mix_2
-            roughness_acctive = node_mix_3
-            normal_active = node_mix_4
+            nodes_tex_uniq['Albedo'] = node_mix_1
+            nodes_tex_uniq['Metallic'] = node_mix_2
+            nodes_tex_uniq['Roughness'] = node_mix_3
+            nodes_tex_uniq['Normal'] = node_mix_4
 
         
-        return [node_mix_1, node_mix_2, node_mix_3, node_mix_4]
-    
-    
-    
-    
-   
-    
-    
-    def _set_links_shader(self, nodes_outputs: list):
+    def _set_links_shader(self, nodes_outputs: dict):
         node_shader = self._get_nodes_by_type('BSDF_PRINCIPLED')[0]
         node_normal = self._get_nodes_by_type('NORMAL_MAP')[0]
 
-        self._links.new(nodes_outputs[0].outputs['Color'], node_shader.inputs['Base Color'])
-        self._links.new(nodes_outputs[1].outputs['Color'], node_shader.inputs['Metallic'])
-        self._links.new(nodes_outputs[2].outputs['Color'], node_shader.inputs['Roughness'])
-        self._links.new(nodes_outputs[3].outputs['Color'], node_normal.inputs['Color'])
+        self._links.new(nodes_outputs['Albedo'].outputs['Color'], node_shader.inputs['Base Color'])
+        self._links.new(nodes_outputs['Metallic'].outputs['Color'], node_shader.inputs['Metallic'])
+        self._links.new(nodes_outputs['Roughness'].outputs['Color'], node_shader.inputs['Roughness'])
+        self._links.new(nodes_outputs['Normal'].outputs['Color'], node_normal.inputs['Color'])
 
     
     def set_tex_tile(self):
         nodes_tex_uniq = self._get_nodes_tex_uniq()
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])
-        block_uv_tile = self._get_block_uv_tile([-2000, 0], self._scale_tile)
-
-        
-        nodes_outputs = self._get_blocks_mixed_tex(nodes_tex_uniq, block_uv_tile)
-        self._set_links_shader(nodes_outputs)
-
+        block_uv_tile = self._get_block_uv_tile([-2000, 0], self._scale_tile)        
+        self._set_nodes_tex_uniq_mixed(nodes_tex_uniq, block_uv_tile)
+        self._set_links_shader(nodes_tex_uniq)
         return self
