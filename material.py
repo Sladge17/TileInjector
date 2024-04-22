@@ -6,19 +6,9 @@ from logger import Logger
 
 class Material:
     def __init__(self, donor: str, name: str):
-        self._remove_material(name)
         self.material = self._get_material(donor, name)
         self._set_nodespace()
         self._tex_tile_path = "/home/maxim/Projects/LestaTest/Textures/Tile_textures"
-
-
-    @staticmethod
-    def _remove_material(name: str):
-        try:
-            bpy.data.materials.remove(bpy.data.materials.get(name))
-            Logger.remove_material(name)
-        except TypeError:
-            pass
 
 
     @staticmethod
@@ -189,14 +179,24 @@ class Material:
         self._links.new(nodes_outputs['Normal'].outputs['Color'], node_normal.inputs['Color'])
 
     
+    def _change_node_parameters(self, scale):
+        node_math = self._get_nodes_by_type('VECT_MATH')[0]
+        node_math.inputs[1].default_value = (scale,) * 3
+    
+    
     def set_tex_tile(
             self,
+            tiled,
+            scale,
             tile_albedo_1="",
             tile_albedo_2="",
             tile_albedo_3="",
             tile_albedo_4="",
-            scale=2.0
         ):
+        if tiled:
+            self._change_node_parameters(scale)
+            return self
+        
         nodes_tex_uniq = self._get_nodes_tex_uniq()
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])

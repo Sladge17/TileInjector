@@ -6,7 +6,7 @@ class Logger:
 
     @classmethod
     def empty_sample(cls):
-        print("ERROR: No object selected")
+        print("ERROR: No correct object selected")
 
 
     @classmethod
@@ -22,8 +22,3 @@ class Logger:
     @classmethod
     def uv_less_than_need(cls, obj: str, channels: int):
         print(f"WARNING: Object \"{obj}\" has uv less than {channels}")
-
-
-    @classmethod
-    def remove_material(cls, name: str):
-        print(f"WARNING: Material \"{name}\" was removed")
