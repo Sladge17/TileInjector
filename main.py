@@ -1,11 +1,26 @@
-import bpy
 import os
 import sys
 sys.path.append(os.environ['SCRIPT_PATH'])
 
+import bpy
+from bpy.utils import register_class, unregister_class
+
 from sampler import Sampler
 from logger import Logger
 from material import Material
+from interface import VIEW3D_PT_tile_injector
+from executor import MESH_OT_tile_injector
+
+
+
+def register():
+    register_class(VIEW3D_PT_tile_injector)
+
+
+def unregister():
+    unregister_class(VIEW3D_PT_tile_injector)
+
+
 
 
 
@@ -26,5 +41,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    register()
+    # main()
     Logger.task_done()
