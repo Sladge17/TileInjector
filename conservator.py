@@ -5,26 +5,30 @@ from bpy.props import StringProperty, FloatProperty
 
 class UI_Property(PropertyGroup):
     tile_albedo_0 : StringProperty(
-        name = "tile_albedo",
-        description = "Path to tile albedo texture",
+        name="tile_albedo",
+        description="Path to tile albedo texture",
+        subtype=  'FILE_PATH',
     )
     tile_albedo_1 : StringProperty(
-        name = "tile_albedo",
-        description = "Path to tile albedo texture",
+        name="tile_albedo",
+        description="Path to tile albedo texture",
+        subtype=  'FILE_PATH',
     )
     tile_albedo_2 : StringProperty(
-        name = "tile_albedo",
-        description = "Path to tile albedo texture",
+        name="tile_albedo",
+        description="Path to tile albedo texture",
+        subtype=  'FILE_PATH',
     )
     tile_albedo_3 : StringProperty(
-        name = "tile_albedo",
+        name="tile_albedo",
         description = "Path to tile albedo texture",
+        subtype=  'FILE_PATH',
     )
     scale : FloatProperty(
-        name = "scale",
-        description = "Scale factor for tile textures",
-        default = 1.0,
-        min = 0.001,
-        soft_max = 2.0,
-        subtype = 'FACTOR',
+        name="scale",
+        description="Scale factor for tile textures",
+        default=1.0,
+        min=0.001,
+        soft_max=2.0,
+        subtype='FACTOR',
     )
