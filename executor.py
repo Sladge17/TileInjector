@@ -1,35 +1,35 @@
 from bpy.types import Operator
-from bpy.props import StringProperty, FloatProperty
+
+from sampler import Sampler
+from logger import Logger
+from material import Material
 
 
 
-class MESH_OT_tile_injector(Operator):
-    bl_idname = 'mesh.tile_injector'
+class MATERIAL_OT_tile_injector(Operator):
+    bl_idname = 'material.tile_injector'
     bl_label = 'Tile Injector'
     bl_options = {'REGISTER', 'UNDO'}
-
-    texture_albedo_1 : StringProperty(
-        name = "albedo_1",
-        description = "Path to texture",
-    )
-    texture_albedo_2 : StringProperty(
-        name = "albedo_2",
-        description = "Path to texture",
-    )
-    texture_albedo_3 : StringProperty(
-        name = "albedo_3",
-        description = "Path to texture",
-    )
-    texture_albedo_4 : StringProperty(
-        name = "albedo_4",
-        description = "Path to texture",
-    )
-    scale : FloatProperty(
-        name = "scale",
-        description = "Scale factor for tile textures",
-        default = 1.0,
-    )
+    tiled = False
 
 
     def execute(self, context):
+        sample = Sampler()\
+            .set_filter_by_type(target_type='MESH')\
+            .check_uv(channels=2)
+        if not sample.length:
+            Logger.empty_sample()
+            return {'CANCELLED'}
+        
+        material = Material(
+            donor=sample.first_name,
+            name="MODE_Material",
+        ).fix_tex_normal().set_tex_tile(
+            tiled=self.tiled,
+            scale=context.object.tile_injector.scale,
+        )
+        MATERIAL_OT_tile_injector.tiled = True
+        sample.set_material(material=material)
+        Logger.task_done()
         return {'FINISHED'}
+    
