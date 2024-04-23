@@ -27,8 +27,8 @@ class Material:
 
     
     def fix_tex_normal(self):
-        nodes = self._get_nodes_by_type('TEX_IMAGE')
-        for node in nodes:
+        nodes_tex = self._get_nodes_by_type('TEX_IMAGE')
+        for node in nodes_tex:
             if "normal" in node.image.name.lower():
                 node.image.colorspace_settings.name = 'Non-Color'
                 break
@@ -104,7 +104,7 @@ class Material:
 
         ):
         node_tex = self._create_node_by_type('ShaderNodeTexImage', origin)
-        node_tex.image = bpy.data.images.load(tiles[index][int(is_normal)])            
+        node_tex.image = bpy.data.images.load(tiles[index][int(is_normal)])
         node_mix_1 = self._create_node_by_type(
             'ShaderNodeMixRGB', self._get_shifted_origin(origin, 300, 50)
         )
@@ -178,14 +178,33 @@ class Material:
         self._links.new(nodes_outputs['Normal'].outputs['Color'], node_normal.inputs['Color'])
 
     
-    def _change_node_parameters(self, scale):
+    def _change_tiles(self, tiles: tuple):
+        nodes_tex = self._get_nodes_by_type('TEX_IMAGE')
+        for node in nodes_tex:
+            for index in range(4):
+                if f"tile{index}_a" in node.image.name.split('.')[0].lower():
+                    node.image = bpy.data.images.load(tiles[index][0])
+                    break
+
+                if f"tile{index}_n" in node.image.name.split('.')[0].lower():
+                    node.image = bpy.data.images.load(tiles[index][1])
+                    node.image.colorspace_settings.name = 'Non-Color'
+                    break                
+    
+    
+    def _change_scale(self, scale: float):
         node_math = self._get_nodes_by_type('VECT_MATH')[0]
-        node_math.inputs[1].default_value = (scale,) * 3
+        node_math.inputs[1].default_value = (scale,) * 3        
+
+    
+    def _change_node_parameters(self, tiles: tuple, scale: float):
+        self._change_tiles(tiles)
+        self._change_scale(scale)
     
     
-    def set_tex_tile(self, tiled: bool, tiles: tuple, scale: float,):
-        if tiled:
-            self._change_node_parameters(scale)
+    def set_tex_tile(self, is_tiled: bool, tiles: tuple, scale: float,):
+        if is_tiled:
+            self._change_node_parameters(tiles, scale)
             return self
         
         nodes_tex_uniq = self._get_nodes_tex_uniq()
