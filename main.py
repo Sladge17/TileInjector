@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.environ['SCRIPT_PATH'])
 
 
-from bpy.types import Object
+from bpy.types import Scene
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
@@ -17,11 +17,11 @@ def register():
     register_class(UI_Property)
     register_class(MATERIAL_OT_tile_injector)
     register_class(VIEW3D_PT_tile_injector)
-    Object.tile_injector = PointerProperty(type=UI_Property)
+    Scene.tile_injector = PointerProperty(type=UI_Property)
 
 
 def unregister():
-    del Object.tile_injector
+    del Scene.tile_injector
     unregister_class(VIEW3D_PT_tile_injector)
     unregister_class(MATERIAL_OT_tile_injector)
     unregister_class(UI_Property)

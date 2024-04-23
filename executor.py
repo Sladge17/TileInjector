@@ -68,52 +68,52 @@ class MATERIAL_OT_tile_injector(Operator):
 
         # /home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga
 
-        # print(abspath(context.object.tile_injector.tile_albedo_0))
+        # print(abspath(context.scene.tile_injector.tile_albedo_0))
 
         if not self._check_tex(
-            abspath(context.object.tile_injector.tile_albedo_0),
+            abspath(context.scene.tile_injector.tile_albedo_0),
             Imputs.tile_albedo_0.value,
         ):
             return False
         
         if not self._check_tex(
-            abspath(context.object.tile_injector.tile_albedo_1),
+            abspath(context.scene.tile_injector.tile_albedo_1),
             Imputs.tile_albedo_1.value,
         ):
             return False
         
         if not self._check_tex(
-            abspath(context.object.tile_injector.tile_albedo_2),
+            abspath(context.scene.tile_injector.tile_albedo_2),
             Imputs.tile_albedo_2.value,
         ):
             return False
         
         if not self._check_tex(
-            abspath(context.object.tile_injector.tile_albedo_3),
+            abspath(context.scene.tile_injector.tile_albedo_3),
             Imputs.tile_albedo_3.value,
         ):
             return False
         
         if not self._check_tex(
-            abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_0)),
+            abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_0)),
             Imputs.tile_albedo_0.value,
         ):
             return False
         
         if not self._check_tex(
-            abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_1)),
+            abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_1)),
             Imputs.tile_albedo_1.value,
         ):
             return False
         
         if not self._check_tex(
-            abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_2)),
+            abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_2)),
             Imputs.tile_albedo_2.value,
         ):
             return False
         
         if not self._check_tex(
-            abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_3)),
+            abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_3)),
             Imputs.tile_albedo_3.value,
         ):
             return False
@@ -142,20 +142,20 @@ class MATERIAL_OT_tile_injector(Operator):
 
         tiles = (
             (
-                abspath(context.object.tile_injector.tile_albedo_0),
-                abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_0)),
+                abspath(context.scene.tile_injector.tile_albedo_0),
+                abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_0)),
             ),
             (
-                abspath(context.object.tile_injector.tile_albedo_1),
-                abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_1)),
+                abspath(context.scene.tile_injector.tile_albedo_1),
+                abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_1)),
             ),
             (
-                abspath(context.object.tile_injector.tile_albedo_2),
-                abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_2)),
+                abspath(context.scene.tile_injector.tile_albedo_2),
+                abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_2)),
             ),
             (
-                abspath(context.object.tile_injector.tile_albedo_3),
-                abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_3)),
+                abspath(context.scene.tile_injector.tile_albedo_3),
+                abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_3)),
             ),
         )
         
@@ -164,7 +164,7 @@ class MATERIAL_OT_tile_injector(Operator):
             name="TILED_Material",
         ).fix_tex_normal().set_tex_tile(
             tiles=tiles,
-            scale=context.object.tile_injector.scale,
+            scale=context.scene.tile_injector.scale,
         )
         sample.set_material(material=material)
         Logger.task_done()
