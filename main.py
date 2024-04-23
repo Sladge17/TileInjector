@@ -28,5 +28,19 @@ def unregister():
 
 
 
+bl_info = {
+    "name": "Tile Injector",
+    "author": "Sosov Maxim",
+    "version": (1, 0),
+    "blender": (3, 3, 0),
+    "category": "Material",
+    "location": "View 3D> UI > MaterialHelpers",
+    "description": "Inject tile patterns to selected meshes materials from selected textures",
+    "warning": "",
+    "wiki_url": "https://github.com/Sladge17/TileInjector",
+    }
+
+
+
 if __name__ == "__main__":
     register()
