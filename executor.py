@@ -59,17 +59,7 @@ class MATERIAL_OT_tile_injector(Operator):
         return osp.join(osp.split(path_albedo)[0], base_name)
 
 
-    def _check_texs(self, context):
-        # tile_albedo_0 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga"
-        # tile_albedo_1 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile1_a.tga"
-        # tile_albedo_2 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile2_a.tga"
-        # tile_albedo_3 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile3_a.tga"
-
-
-        # /home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga
-
-        # print(abspath(context.scene.tile_injector.tile_albedo_0))
-
+    def _check_texs(self, context) -> bool:
         if not self._check_tex(
             abspath(context.scene.tile_injector.tile_albedo_0),
             Imputs.tile_albedo_0.value,
@@ -121,26 +111,8 @@ class MATERIAL_OT_tile_injector(Operator):
         return True    
     
     
-    def execute(self, context):
-        sample = Sampler()\
-            .set_filter_by_type(target_type='MESH')\
-            .check_uv(channels=2)
-        if not sample.length:
-            Logger.empty_sample()
-            return {'CANCELLED'}
-        
-        if not self._check_texs(context):
-            return {'CANCELLED'}
-        
-        
-        # tile_albedo_0 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga"
-        # tile_albedo_1 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile1_a.tga"
-        # tile_albedo_2 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile2_a.tga"
-        # tile_albedo_3 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile3_a.tga"
-
-        # //Textures/Tile_textures/Tile0_a.tga
-
-        tiles = (
+    def _get_tiles(self, context) -> tuple:
+        return (
             (
                 abspath(context.scene.tile_injector.tile_albedo_0),
                 abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_0)),
@@ -157,7 +129,21 @@ class MATERIAL_OT_tile_injector(Operator):
                 abspath(context.scene.tile_injector.tile_albedo_3),
                 abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_3)),
             ),
-        )
+        )    
+
+
+    def execute(self, context):
+        sample = Sampler()\
+            .set_filter_by_type(target_type='MESH')\
+            .check_uv(channels=2)
+        if not sample.length:
+            Logger.empty_sample()
+            return {'CANCELLED'}
+        
+        if not self._check_texs(context):
+            return {'CANCELLED'}
+        
+        tiles = self._get_tiles(context)
         
         material = Material(
             donor=sample.first_name,
