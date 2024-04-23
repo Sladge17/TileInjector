@@ -9,8 +9,19 @@ from material import Material
 class MATERIAL_OT_tile_injector(Operator):
     bl_idname = 'material.tile_injector'
     bl_label = 'Tile Injector'
-    bl_options = {'REGISTER', 'UNDO'}
     tiled = False
+
+
+    @classmethod
+    def poll(cls, context):
+        if not context.object.mode == 'OBJECT':
+            return False
+        
+        for obj in context.selected_objects:
+            if obj.type == 'MESH':
+                return True
+            
+        return False
 
 
     def execute(self, context):
