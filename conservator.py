@@ -4,20 +4,20 @@ from bpy.props import StringProperty, FloatProperty
 
 
 class UI_Property(PropertyGroup):
+    tile_albedo_0 : StringProperty(
+        name = "tile_albedo",
+        description = "Path to tile albedo texture",
+    )
     tile_albedo_1 : StringProperty(
-        name = "tile_a_1",
+        name = "tile_albedo",
         description = "Path to tile albedo texture",
     )
     tile_albedo_2 : StringProperty(
-        name = "tile_a_2",
+        name = "tile_albedo",
         description = "Path to tile albedo texture",
     )
     tile_albedo_3 : StringProperty(
-        name = "tile_a_3",
-        description = "Path to tile albedo texture",
-    )
-    tile_albedo_4 : StringProperty(
-        name = "tile_a_4",
+        name = "tile_albedo",
         description = "Path to tile albedo texture",
     )
     scale : FloatProperty(

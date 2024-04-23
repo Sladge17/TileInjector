@@ -1,6 +1,4 @@
 import bpy
-from os import path as osp
-from logger import Logger
 
 
 
@@ -8,7 +6,6 @@ class Material:
     def __init__(self, donor: str, name: str):
         self.material = self._get_material(donor, name)
         self._set_nodespace()
-        self._tex_tile_path = "/home/maxim/Projects/LestaTest/Textures/Tile_textures"
 
 
     @staticmethod
@@ -95,17 +92,19 @@ class Material:
         return [origin[0] + shift_x, origin[1] + shift_y]
     
     
-    def _set_nodes_tex_uniq_mixed_by_block(
+    def _set_nodes_tex_uniq_tiled_by_block(
             self,
-            block: str,
+            tiles: tuple,
             origin: list,
             block_uv_tile,
             node_rgb,
             nodes_tex_uniq,
             index: int,
+            is_normal: bool = False
+
         ):
         node_tex = self._create_node_by_type('ShaderNodeTexImage', origin)
-        node_tex.image = bpy.data.images.load(osp.join(self._tex_tile_path, f"Tile{index}_{block}.tga"))            
+        node_tex.image = bpy.data.images.load(tiles[index][int(is_normal)])            
         node_mix_1 = self._create_node_by_type(
             'ShaderNodeMixRGB', self._get_shifted_origin(origin, 300, 50)
         )
@@ -115,7 +114,7 @@ class Material:
 
         self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
         
-        if block == 'a':
+        if not is_normal:
             self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Fac'])
             self._links.new(nodes_tex_uniq['Albedo'].outputs['Color'], node_mix_1.inputs['Color1'])
             self._links.new(node_tex.outputs['Color'], node_mix_1.inputs['Color2'])
@@ -141,7 +140,7 @@ class Material:
         node_tex.image.colorspace_settings.name = 'Non-Color'
 
     
-    def _set_nodes_tex_uniq_mixed(self, nodes_tex_uniq: dict, block_uv_tile) -> dict:
+    def _set_nodes_tex_uniq_tiled(self, tiles: tuple, nodes_tex_uniq: dict, block_uv_tile) -> dict:
         mask_colors = (
             (1, 0, 0, 1), # color Red
             (0, 1, 0, 1), # color Green
@@ -153,15 +152,15 @@ class Material:
         origin_block_a = [-900, 850]
         origin_block_n = [-900, -750]
 
-        for index in range(2):
+        for index in range(4):
             node_rgb = self._create_node_by_type('ShaderNodeRGB', origin_node_rgb)
             node_rgb.outputs['Color'].default_value = mask_colors[index]
 
-            self._set_nodes_tex_uniq_mixed_by_block(
-                'a', origin_block_a, block_uv_tile, node_rgb, nodes_tex_uniq, index
+            self._set_nodes_tex_uniq_tiled_by_block(
+                tiles, origin_block_a, block_uv_tile, node_rgb, nodes_tex_uniq, index
             )
-            self._set_nodes_tex_uniq_mixed_by_block(
-                'n', origin_block_n, block_uv_tile, node_rgb, nodes_tex_uniq, index
+            self._set_nodes_tex_uniq_tiled_by_block(
+                tiles, origin_block_n, block_uv_tile, node_rgb, nodes_tex_uniq, index, True
             )
             
             origin_node_rgb = self._get_shifted_origin(origin_node_rgb, 0, -200)
@@ -184,15 +183,7 @@ class Material:
         node_math.inputs[1].default_value = (scale,) * 3
     
     
-    def set_tex_tile(
-            self,
-            tiled,
-            scale,
-            tile_albedo_1="",
-            tile_albedo_2="",
-            tile_albedo_3="",
-            tile_albedo_4="",
-        ):
+    def set_tex_tile(self, tiled: bool, tiles: tuple, scale: float,):
         if tiled:
             self._change_node_parameters(scale)
             return self
@@ -201,6 +192,6 @@ class Material:
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])
         block_uv_tile = self._get_block_uv_tile([-2000, 0], scale)        
-        self._set_nodes_tex_uniq_mixed(nodes_tex_uniq, block_uv_tile)
+        self._set_nodes_tex_uniq_tiled(tiles, nodes_tex_uniq, block_uv_tile)
         self._set_links_shader(nodes_tex_uniq)
         return self

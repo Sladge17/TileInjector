@@ -12,10 +12,10 @@ class VIEW3D_PT_tile_injector(Panel):
     def draw(self, context):
         layout = self.layout
         column_input = layout.column()
+        column_input.prop(context.object.tile_injector, 'tile_albedo_0')
         column_input.prop(context.object.tile_injector, 'tile_albedo_1')
         column_input.prop(context.object.tile_injector, 'tile_albedo_2')
         column_input.prop(context.object.tile_injector, 'tile_albedo_3')
-        column_input.prop(context.object.tile_injector, 'tile_albedo_4')
         column_input.prop(context.object.tile_injector, 'scale')
         
         column_exec = layout.column()
