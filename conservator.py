@@ -1,31 +1,33 @@
 from bpy.types import PropertyGroup
 from bpy.props import StringProperty, FloatProperty
 
+from inputs import Imputs
+
 
 
 class UI_Property(PropertyGroup):
     tile_albedo_0 : StringProperty(
-        name="tile_albedo",
+        name=Imputs.tile_albedo_0.value,
         description="Path to tile albedo texture",
-        subtype=  'FILE_PATH',
+        subtype='FILE_PATH',
     )
     tile_albedo_1 : StringProperty(
-        name="tile_albedo",
+        name=Imputs.tile_albedo_1.value,
         description="Path to tile albedo texture",
-        subtype=  'FILE_PATH',
+        subtype='FILE_PATH',
     )
     tile_albedo_2 : StringProperty(
-        name="tile_albedo",
+        name=Imputs.tile_albedo_2.value,
         description="Path to tile albedo texture",
-        subtype=  'FILE_PATH',
+        subtype='FILE_PATH',
     )
     tile_albedo_3 : StringProperty(
-        name="tile_albedo",
+        name=Imputs.tile_albedo_3.value,
         description = "Path to tile albedo texture",
-        subtype=  'FILE_PATH',
+        subtype='FILE_PATH',
     )
     scale : FloatProperty(
-        name="scale",
+        name=Imputs.scale.value,
         description="Scale factor for tile textures",
         default=1.0,
         min=0.001,

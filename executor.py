@@ -1,9 +1,11 @@
 from bpy.types import Operator
+from bpy.path import abspath
 from os import path as osp
 
 from sampler import Sampler
 from logger import Logger
 from material import Material
+from inputs import Imputs
 
 
 
@@ -30,17 +32,21 @@ class MATERIAL_OT_tile_injector(Operator):
         return cls.extensions
     
     
-    def _check_tex(self, path: str) -> bool:
+    def _check_tex(self, path: str, slot: str) -> bool:
+        if not path:
+            Logger.empty_path(slot)
+            return False
+
         if not osp.isfile(path):
-            print(f"ERROR: File {osp.basename(path)} not exist")
+            Logger.file_not_exist(osp.basename(path), slot)
             return False
         
         if not osp.getsize(path):
-            print(f"ERROR: File {osp.basename(path)} is empty")
+            Logger.file_empty(osp.basename(path), slot)
             return False
         
         if not osp.basename(path).split('.')[1] in self._get_extensions():
-            print(f"ERROR: File {osp.basename(path)} not a texture")
+            Logger.file_not_texture(osp.basename(path), slot)
             return False
         
         return True
@@ -53,34 +59,63 @@ class MATERIAL_OT_tile_injector(Operator):
         return osp.join(osp.split(path_albedo)[0], base_name)
 
 
-    def _check_texs(self):
-        tile_albedo_0 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga"
-        tile_albedo_1 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile1_a.tga"
-        tile_albedo_2 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile2_a.tga"
-        tile_albedo_3 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile3_a.tga"
+    def _check_texs(self, context):
+        # tile_albedo_0 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga"
+        # tile_albedo_1 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile1_a.tga"
+        # tile_albedo_2 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile2_a.tga"
+        # tile_albedo_3 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile3_a.tga"
 
-        if not self._check_tex(tile_albedo_0):
+
+        # /home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga
+
+        # print(abspath(context.object.tile_injector.tile_albedo_0))
+
+        if not self._check_tex(
+            abspath(context.object.tile_injector.tile_albedo_0),
+            Imputs.tile_albedo_0.value,
+        ):
             return False
         
-        if not self._check_tex(tile_albedo_1):
+        if not self._check_tex(
+            abspath(context.object.tile_injector.tile_albedo_1),
+            Imputs.tile_albedo_1.value,
+        ):
             return False
         
-        if not self._check_tex(tile_albedo_2):
+        if not self._check_tex(
+            abspath(context.object.tile_injector.tile_albedo_2),
+            Imputs.tile_albedo_2.value,
+        ):
             return False
         
-        if not self._check_tex(tile_albedo_3):
+        if not self._check_tex(
+            abspath(context.object.tile_injector.tile_albedo_3),
+            Imputs.tile_albedo_3.value,
+        ):
             return False
         
-        if not self._check_tex(self._get_path_normal(tile_albedo_0)):
+        if not self._check_tex(
+            abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_0)),
+            Imputs.tile_albedo_0.value,
+        ):
             return False
         
-        if not self._check_tex(self._get_path_normal(tile_albedo_1)):
+        if not self._check_tex(
+            abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_1)),
+            Imputs.tile_albedo_1.value,
+        ):
             return False
         
-        if not self._check_tex(self._get_path_normal(tile_albedo_2)):
+        if not self._check_tex(
+            abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_2)),
+            Imputs.tile_albedo_2.value,
+        ):
             return False
         
-        if not self._check_tex(self._get_path_normal(tile_albedo_3)):
+        if not self._check_tex(
+            abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_3)),
+            Imputs.tile_albedo_3.value,
+        ):
             return False
 
         return True    
@@ -94,20 +129,34 @@ class MATERIAL_OT_tile_injector(Operator):
             Logger.empty_sample()
             return {'CANCELLED'}
         
-        if not self._check_texs():
+        if not self._check_texs(context):
             return {'CANCELLED'}
         
         
-        tile_albedo_0 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga"
-        tile_albedo_1 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile1_a.tga"
-        tile_albedo_2 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile2_a.tga"
-        tile_albedo_3 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile3_a.tga"
+        # tile_albedo_0 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile0_a.tga"
+        # tile_albedo_1 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile1_a.tga"
+        # tile_albedo_2 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile2_a.tga"
+        # tile_albedo_3 = "/home/maxim/Projects/LestaTest/Textures/Tile_textures/Tile3_a.tga"
+
+        # //Textures/Tile_textures/Tile0_a.tga
 
         tiles = (
-            (tile_albedo_0, self._get_path_normal(tile_albedo_0)),
-            (tile_albedo_1, self._get_path_normal(tile_albedo_1)),
-            (tile_albedo_2, self._get_path_normal(tile_albedo_2)),
-            (tile_albedo_3, self._get_path_normal(tile_albedo_3)),
+            (
+                abspath(context.object.tile_injector.tile_albedo_0),
+                abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_0)),
+            ),
+            (
+                abspath(context.object.tile_injector.tile_albedo_1),
+                abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_1)),
+            ),
+            (
+                abspath(context.object.tile_injector.tile_albedo_2),
+                abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_2)),
+            ),
+            (
+                abspath(context.object.tile_injector.tile_albedo_3),
+                abspath(self._get_path_normal(context.object.tile_injector.tile_albedo_3)),
+            ),
         )
         
         material = Material(
