@@ -9,7 +9,6 @@ from material import Material
 class MATERIAL_OT_tile_injector(Operator):
     bl_idname = 'material.tile_injector'
     bl_label = 'Tile Injector'
-    is_tiled = False
 
 
     @classmethod
@@ -48,16 +47,13 @@ class MATERIAL_OT_tile_injector(Operator):
             (tile_albedo_3, tile_normal_3),
         )
         
-        
         material = Material(
             donor=sample.first_name,
-            name="MODE_Material",
+            name="TILED_Material",
         ).fix_tex_normal().set_tex_tile(
-            is_tiled=self.is_tiled,
             tiles=tiles,
             scale=context.object.tile_injector.scale,
         )
-        MATERIAL_OT_tile_injector.is_tiled = True
         sample.set_material(material=material)
         Logger.task_done()
         return {'FINISHED'}

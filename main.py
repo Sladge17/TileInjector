@@ -21,9 +21,10 @@ def register():
 
 
 def unregister():
-    unregister_class(UI_Property)
-    unregister_class(MATERIAL_OT_tile_injector)
+    del Object.tile_injector
     unregister_class(VIEW3D_PT_tile_injector)
+    unregister_class(MATERIAL_OT_tile_injector)
+    unregister_class(UI_Property)
 
 
 

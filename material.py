@@ -4,10 +4,18 @@ import bpy
 
 class Material:
     def __init__(self, donor: str, name: str):
+        self._is_tiled = self._check_donor_tiled(donor, name)
         self.material = self._get_material(donor, name)
         self._set_nodespace()
 
 
+    @staticmethod
+    def _check_donor_tiled(donor: str, name: str):
+        if name in bpy.data.meshes[donor].materials.values()[0].name:
+            return True
+        return False
+
+    
     @staticmethod
     def _get_material(donor: str, name: str):
         donor_material_name = bpy.data.meshes[donor].materials.values()[0].name
@@ -202,8 +210,8 @@ class Material:
         self._change_scale(scale)
     
     
-    def set_tex_tile(self, is_tiled: bool, tiles: tuple, scale: float,):
-        if is_tiled:
+    def set_tex_tile(self, tiles: tuple, scale: float,):
+        if self._is_tiled:
             self._change_node_parameters(tiles, scale)
             return self
         
