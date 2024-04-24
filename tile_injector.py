@@ -1,8 +1,3 @@
-import os
-import sys
-sys.path.append(os.environ['SCRIPT_PATH'])
-
-
 from bpy.types import Scene
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
