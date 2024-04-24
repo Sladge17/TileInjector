@@ -61,4 +61,4 @@ class Logger:
 
     @classmethod
     def file_not_image(cls, file: str, slot: str):
-        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" is not a image")
+        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" is not an image")
