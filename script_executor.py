@@ -3,7 +3,7 @@ import sys
 
 
 
-script_path = "/home/maxim/Projects/LestaTest"
+script_path = "/home/maxim/Projects/TileInjector"
 script_name = "tile_injector.py"
 
 sys.path.append(script_path)
