@@ -1,5 +1,6 @@
 # Description
 "Tile Injector" is a tool for Blender that creates a new material by mixing unique object textures (Albedo, Metallic, Roughness, Normal) with four sets of tile textures (Tile{0..3}_{a,n}). Tiled textures used a separate scalable UV channel.
+
 Developed and tested on Ubuntu 20.04 for Blender 3.3.
 
 # Screenshots
