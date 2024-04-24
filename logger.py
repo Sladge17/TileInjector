@@ -26,32 +26,32 @@ class Logger:
 
     @classmethod
     def not_target_object(cls, obj: str, target_type: str):
-        print(f"\033[33mWARNING: Object \"{obj}\" does not a {target_type.lower()}\033[37m")
+        print(f"\033[33mWARNING: Object \"{obj}\" is not a {target_type.lower()}\033[37m")
 
 
     @classmethod
     def uv_more_than_need(cls, obj: str, channels: int):
-        print(f"\033[33mWARNING: Object \"{obj}\" has uv more than {channels}, need optimize\033[37m")
+        print(f"\033[33mWARNING: Object \"{obj}\" has UV maps more than {channels}, need optimize\033[37m")
 
 
     @classmethod
     def uv_less_than_need(cls, obj: str, channels: int):
-        print(f"\033[33mWARNING: Object \"{obj}\" has uv less than {channels}\033[37m")
+        print(f"\033[33mWARNING: Object \"{obj}\" has UV maps less than {channels}\033[37m")
 
 
     @classmethod
     def empty_sample(cls):
-        cls._draw_message_error("Not selected polygonal object with two UV maps")
+        cls._draw_message_error("Not selected mesh objects with two UV maps")
 
 
     @classmethod
     def empty_path(cls, slot: str):
-        cls._draw_message_error(f"Empty slot \"{slot}\"")
+        cls._draw_message_error(f"Slot \"{slot}\" is empty")
 
 
     @classmethod
     def file_not_exist(cls, file: str, slot: str):
-        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" not exist")
+        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" does not exist")
 
 
     @classmethod
@@ -61,4 +61,4 @@ class Logger:
 
     @classmethod
     def file_not_image(cls, file: str, slot: str):
-        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" not a image")
+        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" is not a image")

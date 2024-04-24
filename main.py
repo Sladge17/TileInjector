@@ -38,7 +38,7 @@ bl_info = {
     "description": "Inject tile patterns to selected meshes materials from selected textures",
     "warning": "",
     "wiki_url": "https://github.com/Sladge17/TileInjector",
-    }
+}
 
 
 
