@@ -31,17 +31,17 @@ class Logger:
 
     @classmethod
     def uv_more_than_need(cls, obj: str, channels: int):
-        print(f"\033[33mWARNING: Object \"{obj}\" has UV maps more than {channels}, need optimize\033[37m")
+        print(f"\033[33mWARNING: Object \"{obj}\" has UV channels more than {channels}, need optimize\033[37m")
 
 
     @classmethod
     def uv_less_than_need(cls, obj: str, channels: int):
-        print(f"\033[33mWARNING: Object \"{obj}\" has UV maps less than {channels}\033[37m")
+        print(f"\033[33mWARNING: Object \"{obj}\" has UV channels less than {channels}\033[37m")
 
 
     @classmethod
     def empty_sample(cls):
-        cls._draw_message_error("Not selected mesh objects with two UV maps")
+        cls._draw_message_error("Not selected mesh objects with two UV channels")
 
 
     @classmethod
