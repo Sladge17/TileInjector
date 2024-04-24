@@ -1,4 +1,24 @@
+import bpy
+
+
+
 class Logger:
+    title_error = "ERROR"
+
+
+    @classmethod
+    def _draw_message_error(cls, message):
+        print(f"\033[31m{cls.title_error}: {message}\033[37m")
+        def draw_message(self, context):
+            self.layout.label(text=message)
+        
+        bpy.context.window_manager.popup_menu(
+            draw_message,
+            title=cls.title_error,
+            icon='ERROR'
+        )
+
+
     @classmethod
     def task_done(cls):
         print("INFO: Success completed", end="\n\n")
@@ -6,7 +26,7 @@ class Logger:
 
     @classmethod
     def not_target_object(cls, obj: str, target_type: str):
-        print(f"\033[33mWARNING: Object \"{obj}\" not a {target_type.lower()}\033[37m")
+        print(f"\033[33mWARNING: Object \"{obj}\" does not a {target_type.lower()}\033[37m")
 
 
     @classmethod
@@ -21,23 +41,24 @@ class Logger:
 
     @classmethod
     def empty_sample(cls):
-        print("\033[31mERROR: No correct object selected\033[37m")
+        cls._draw_message_error("Not selected polygonal object with two UV maps")
 
 
     @classmethod
     def empty_path(cls, slot: str):
-        print(f"\033[31mERROR: Empty path in slot \"{slot}\"\033[37m")
-    
+        cls._draw_message_error(f"Empty slot \"{slot}\"")
+
+
     @classmethod
     def file_not_exist(cls, file: str, slot: str):
-        print(f"\033[31mERROR: File {file} not exist in slot \"{slot}\"\033[37m")
+        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" not exist")
 
 
     @classmethod
     def file_empty(cls, file: str, slot: str):
-        print(f"\033[31mERROR: File {file} is empty in slot \"{slot}\"\033[37m")
+        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" is empty")
 
 
     @classmethod
-    def file_not_texture(cls, file: str, slot: str):
-        print(f"\033[31mERROR: File {file} not a texture in slot \"{slot}\"\033[37m")
+    def file_not_image(cls, file: str, slot: str):
+        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" not a image")

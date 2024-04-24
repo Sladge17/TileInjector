@@ -46,7 +46,7 @@ class MATERIAL_OT_tile_injector(Operator):
             return False
         
         if not osp.basename(path).split('.')[1] in self._get_extensions():
-            Logger.file_not_texture(osp.basename(path), slot)
+            Logger.file_not_image(osp.basename(path), slot)
             return False
         
         return True
