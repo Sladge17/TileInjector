@@ -1,7 +1,7 @@
 from bpy.types import PropertyGroup
 from bpy.props import StringProperty, FloatProperty
 
-from inputs import Imputs
+from .inputs import Imputs
 
 
 

@@ -7,9 +7,11 @@ from bpy.types import Scene
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-from conservator import UI_Property
-from executor import MATERIAL_OT_tile_injector
-from interface import VIEW3D_PT_tile_injector
+from res_tile_injector import (
+    UI_Property,
+    MATERIAL_OT_tile_injector,
+    VIEW3D_PT_tile_injector,
+)
 
 
 
@@ -34,7 +36,7 @@ bl_info = {
     "version": (1, 0),
     "blender": (3, 3, 0),
     "category": "Material",
-    "location": "View 3D> UI > MaterialHelpers",
+    "location": "View3D> UI > MaterialHelpers",
     "description": "Inject tile patterns to selected meshes materials from selected textures",
     "warning": "",
     "wiki_url": "https://github.com/Sladge17/TileInjector",

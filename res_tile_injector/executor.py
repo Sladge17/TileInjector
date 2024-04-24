@@ -2,10 +2,10 @@ from bpy.types import Operator
 from bpy.path import abspath
 from os import path as osp
 
-from sampler import Sampler
-from logger import Logger
-from material import Material
-from inputs import Imputs
+from .sampler import Sampler
+from .logger import Logger
+from .material import Material
+from .inputs import Imputs
 
 
 
