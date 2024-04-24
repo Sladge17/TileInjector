@@ -21,7 +21,7 @@ class Logger:
 
     @classmethod
     def task_done(cls):
-        print("INFO: Success completed", end="\n\n")
+        print("INFO: Successfully completed")
 
 
     @classmethod
