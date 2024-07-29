@@ -31,7 +31,7 @@ bl_info = {
     "version": (1, 0),
     "blender": (3, 3, 0),
     "category": "Material",
-    "location": "View3D> UI > MaterialHelpers",
+    "location": "View3D > UI > MaterialHelpers",
     "description": "Inject tile patterns to selected meshes materials from selected textures",
     "warning": "",
     "wiki_url": "https://github.com/Sladge17/TileInjector",

@@ -4,7 +4,7 @@ import sys
 
 
 script_path = "/home/maxim/Projects/TileInjector"
-script_name = "tile_injector.py"
+script_name = "__init__.py"
 
 sys.path.append(script_path)
 
