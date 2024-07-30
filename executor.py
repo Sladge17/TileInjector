@@ -131,6 +131,15 @@ class MATERIAL_OT_tile_injector(Operator):
                 abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_3)),
             ),
         )
+    
+
+    def _get_mix_colors(self, context) -> tuple:
+        return (
+            list(context.scene.tile_injector.mix_color_0) + [1.0],
+            list(context.scene.tile_injector.mix_color_1) + [1.0],
+            list(context.scene.tile_injector.mix_color_2) + [1.0],
+            list(context.scene.tile_injector.mix_color_3) + [1.0],        
+        )
 
 
     def execute(self, context):
@@ -145,13 +154,18 @@ class MATERIAL_OT_tile_injector(Operator):
             return {'CANCELLED'}
         
         tiles = self._get_tiles(context)
-        Group_MixByColor.init_group()
+        mix_colors = self._get_mix_colors(context)
+
+        # print(mix_colors)
+        # return {'FINISHED'}
         
+        Group_MixByColor.init_group()
         material = Material(
             donor=sample.first_name,
             name="TILED_Material",
         ).fix_tex_normal().set_tex_tile(
             tiles=tiles,
+            mix_colors=mix_colors,
             scale=context.scene.tile_injector.scale,
         )
         sample.set_material(material=material)

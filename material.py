@@ -152,21 +152,20 @@ class Material:
         node_tex.image.colorspace_settings.name = 'Non-Color'
 
     
-    def _set_nodes_tex_uniq_tiled(self, tiles: tuple, nodes_tex_uniq: dict, block_uv_tile) -> dict:
-        mask_colors = (
-            (1, 0, 0, 1), # color Red
-            (0, 1, 0, 1), # color Green
-            (0, 0, 1, 1), # color Blue
-            (0, 0, 0, 1), # color Black
-        )
-
+    def _set_nodes_tex_uniq_tiled(
+            self,
+            tiles: tuple,
+            mix_colors: tuple,
+            nodes_tex_uniq: dict,
+            block_uv_tile,
+        ):
         origin_node_rgb = [-1450, 200]
         origin_block_a = [-900, 850]
         origin_block_n = [-900, -750]
 
         for index in range(4):
             node_rgb = self._create_node_by_type('ShaderNodeRGB', origin_node_rgb)
-            node_rgb.outputs['Color'].default_value = mask_colors[index]
+            node_rgb.outputs['Color'].default_value = mix_colors[index]
 
             self._set_nodes_tex_uniq_tiled_by_block(
                 tiles, origin_block_a, block_uv_tile, node_rgb, nodes_tex_uniq, index
@@ -204,25 +203,32 @@ class Material:
                     break                
     
     
+    def _change_mix_colors(self, mix_colors: tuple):
+        nodes_rgb = self._get_nodes_by_type('RGB')
+        for index in range(len(nodes_rgb)):
+            nodes_rgb[index].outputs['Color'].default_value = mix_colors[index]
+
+
     def _change_scale(self, scale: float):
         node_math = self._get_nodes_by_type('VECT_MATH')[0]
         node_math.inputs[1].default_value = (scale,) * 3        
 
     
-    def _change_node_parameters(self, tiles: tuple, scale: float):
+    def _change_node_parameters(self, tiles: tuple, mix_colors: tuple, scale: float):
         self._change_tiles(tiles)
+        self._change_mix_colors(mix_colors)
         self._change_scale(scale)
     
     
-    def set_tex_tile(self, tiles: tuple, scale: float,):
+    def set_tex_tile(self, tiles: tuple, mix_colors: tuple, scale: float,):
         if self._is_tiled:
-            self._change_node_parameters(tiles, scale)
+            self._change_node_parameters(tiles, mix_colors, scale)
             return self
         
         nodes_tex_uniq = self._get_nodes_tex_uniq()
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])
         block_uv_tile = self._get_block_uv_tile([-2000, 0], scale)        
-        self._set_nodes_tex_uniq_tiled(tiles, nodes_tex_uniq, block_uv_tile)
+        self._set_nodes_tex_uniq_tiled(tiles, mix_colors, nodes_tex_uniq, block_uv_tile)
         self._set_links_shader(nodes_tex_uniq)
         return self
