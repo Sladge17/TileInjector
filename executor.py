@@ -6,7 +6,7 @@ from sampler import Sampler
 from logger import Logger
 from group_mix_by_color import Group_MixByColor
 from material import Material
-from inputs import Imputs
+from inputs import Inputs
 
 
 
@@ -63,49 +63,49 @@ class MATERIAL_OT_tile_injector(Operator):
     def _check_texs(self, context) -> bool:
         if not self._check_tex(
             abspath(context.scene.tile_injector.tile_albedo_0),
-            Imputs.tile_albedo_0.value,
+            Inputs.tile_albedo_0.value,
         ):
             return False
         
         if not self._check_tex(
             abspath(context.scene.tile_injector.tile_albedo_1),
-            Imputs.tile_albedo_1.value,
+            Inputs.tile_albedo_1.value,
         ):
             return False
         
         if not self._check_tex(
             abspath(context.scene.tile_injector.tile_albedo_2),
-            Imputs.tile_albedo_2.value,
+            Inputs.tile_albedo_2.value,
         ):
             return False
         
         if not self._check_tex(
             abspath(context.scene.tile_injector.tile_albedo_3),
-            Imputs.tile_albedo_3.value,
+            Inputs.tile_albedo_3.value,
         ):
             return False
         
         if not self._check_tex(
             abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_0)),
-            Imputs.tile_albedo_0.value,
+            Inputs.tile_albedo_0.value,
         ):
             return False
         
         if not self._check_tex(
             abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_1)),
-            Imputs.tile_albedo_1.value,
+            Inputs.tile_albedo_1.value,
         ):
             return False
         
         if not self._check_tex(
             abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_2)),
-            Imputs.tile_albedo_2.value,
+            Inputs.tile_albedo_2.value,
         ):
             return False
         
         if not self._check_tex(
             abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_3)),
-            Imputs.tile_albedo_3.value,
+            Inputs.tile_albedo_3.value,
         ):
             return False
 

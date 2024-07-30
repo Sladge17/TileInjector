@@ -1,5 +1,7 @@
 from bpy.types import Panel
 
+from inputs import Inputs
+
 
 
 class VIEW3D_PT_tile_injector(Panel):
@@ -11,13 +13,26 @@ class VIEW3D_PT_tile_injector(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_input = layout.column()
-        column_input.prop(context.scene.tile_injector, 'tile_albedo_0')
-        column_input.prop(context.scene.tile_injector, 'tile_albedo_1')
-        column_input.prop(context.scene.tile_injector, 'tile_albedo_2')
-        column_input.prop(context.scene.tile_injector, 'tile_albedo_3')
-        column_input.prop(context.scene.tile_injector, 'scale')
+        raw_input = layout.row()
+        raw_input.prop(context.scene.tile_injector, Inputs.tile_albedo_0.name)
+        raw_input.prop(context.scene.tile_injector, Inputs.mix_color_0.name)
+
+        raw_input = layout.row()
+        raw_input.prop(context.scene.tile_injector, Inputs.tile_albedo_1.name)
+        raw_input.prop(context.scene.tile_injector, Inputs.mix_color_1.name)
+
+        raw_input = layout.row()
+        raw_input.prop(context.scene.tile_injector, Inputs.tile_albedo_2.name)
+        raw_input.prop(context.scene.tile_injector, Inputs.mix_color_2.name)
+
+        raw_input = layout.row()
+        raw_input.prop(context.scene.tile_injector, Inputs.tile_albedo_3.name)
+        raw_input.prop(context.scene.tile_injector, Inputs.mix_color_3.name)
+
+        raw_input = layout.row()
+        raw_input.prop(context.scene.tile_injector, Inputs.scale.name)
         
+        raw_input = layout.row()
         column_exec = layout.column()
         column_exec.scale_y = 1.4
         column_exec.operator(
