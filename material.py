@@ -1,5 +1,7 @@
 import bpy
 
+from group_mix_by_color import Group_MixByColor
+
 
 
 class Material:
@@ -113,21 +115,23 @@ class Material:
         ):
         node_tex = self._create_node_by_type('ShaderNodeTexImage', origin)
         node_tex.image = bpy.data.images.load(tiles[index][int(is_normal)])
-        node_mix_1 = self._create_node_by_type(
-            'ShaderNodeMixRGB', self._get_shifted_origin(origin, 300, 50)
+        node_mix_1 = Group_MixByColor.get_group(
+            self.material.name,
+            self._get_shifted_origin(origin, 300, 50),
         )
-        node_mix_2 = self._create_node_by_type(
-            'ShaderNodeMixRGB', self._get_shifted_origin(origin, 300, -150)
+        node_mix_2 = Group_MixByColor.get_group(
+            self.material.name,
+            self._get_shifted_origin(origin, 300, -150),
         )
 
         self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
         
         if not is_normal:
-            self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Fac'])
+            self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Color'])
             self._links.new(nodes_tex_uniq['Albedo'].outputs['Color'], node_mix_1.inputs['Color1'])
             self._links.new(node_tex.outputs['Color'], node_mix_1.inputs['Color2'])
 
-            self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Fac'])
+            self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Color'])
             self._links.new(nodes_tex_uniq['Metallic'].outputs['Color'], node_mix_2.inputs['Color1'])
             self._links.new(node_tex.outputs['Alpha'], node_mix_2.inputs['Color2'])
 
@@ -135,11 +139,11 @@ class Material:
             nodes_tex_uniq['Metallic'] = node_mix_2
             return
         
-        self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Fac'])
+        self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Color'])
         self._links.new(nodes_tex_uniq['Normal'].outputs['Color'], node_mix_2.inputs['Color1'])
         self._links.new(node_tex.outputs['Color'], node_mix_2.inputs['Color2'])
 
-        self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Fac'])
+        self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Color'])
         self._links.new(nodes_tex_uniq['Roughness'].outputs['Color'], node_mix_1.inputs['Color1'])
         self._links.new(node_tex.outputs['Alpha'], node_mix_1.inputs['Color2'])
 

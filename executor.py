@@ -4,6 +4,7 @@ from os import path as osp
 
 from sampler import Sampler
 from logger import Logger
+from group_mix_by_color import Group_MixByColor
 from material import Material
 from inputs import Imputs
 
@@ -129,7 +130,7 @@ class MATERIAL_OT_tile_injector(Operator):
                 abspath(context.scene.tile_injector.tile_albedo_3),
                 abspath(self._get_path_normal(context.scene.tile_injector.tile_albedo_3)),
             ),
-        )    
+        )
 
 
     def execute(self, context):
@@ -144,6 +145,7 @@ class MATERIAL_OT_tile_injector(Operator):
             return {'CANCELLED'}
         
         tiles = self._get_tiles(context)
+        Group_MixByColor.init_group()
         
         material = Material(
             donor=sample.first_name,
