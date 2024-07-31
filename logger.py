@@ -45,20 +45,26 @@ class Logger:
 
 
     @classmethod
-    def empty_path(cls, slot: str):
-        cls._draw_message_error(f"Slot \"{slot}\" is empty")
+    def empty_path(cls, field: str, slot: int):
+        cls._draw_message_error(f"Field \"{field}\" of slot \"Tile_{slot}\" is empty")
 
 
     @classmethod
-    def file_not_exist(cls, file: str, slot: str):
-        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" does not exist")
+    def file_not_exist(cls, file: str, field: str, slot: int):
+        cls._draw_message_error(
+            f"File \"{file}\" in field \"{field}\" of slot \"Tile_{slot}\" does not exist"
+        )
 
 
     @classmethod
-    def file_empty(cls, file: str, slot: str):
-        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" is empty")
+    def file_empty(cls, file: str, field: str, slot: int):
+        cls._draw_message_error(
+            f"File \"{file}\" in field \"{field}\" of slot \"Tile_{slot}\" is empty"
+        )
 
 
     @classmethod
-    def file_not_image(cls, file: str, slot: str):
-        cls._draw_message_error(f"File \"{file}\" in slot \"{slot}\" is not an image")
+    def file_not_image(cls, file: str, field: str, slot: int):
+        cls._draw_message_error(
+            f"File \"{file}\" in field \"{field}\" of slot \"Tile_{slot}\" is not an image"
+        )

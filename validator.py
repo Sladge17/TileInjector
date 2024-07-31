@@ -16,21 +16,21 @@ class Validator:
     
     
     @classmethod
-    def _check_tex(cls, path: str, field: str, slot: str) -> bool:
+    def _check_texture(cls, path: str, field: str, slot: int) -> bool:
         if not path:
             Logger.empty_path(field, slot)
             return False
 
         if not osp.isfile(path):
-            Logger.file_not_exist(osp.basename(path), slot)
+            Logger.file_not_exist(osp.basename(path), field, slot)
             return False
         
         if not osp.getsize(path):
-            Logger.file_empty(osp.basename(path), slot)
+            Logger.file_empty(osp.basename(path), field, slot)
             return False
         
         if not osp.basename(path).split('.')[1] in cls._get_extensions():
-            Logger.file_not_image(osp.basename(path), slot)
+            Logger.file_not_image(osp.basename(path), field, slot)
             return False
         
         return True
@@ -54,8 +54,8 @@ class Validator:
             path_normal = abspath(cls._get_path_normal(path_albedo))
             path_albedo = abspath(path_albedo)
             field = getattr(Inputs, f"albedo_texture_{slot}").value
-            if not cls._check_tex(path_albedo, field, slot) or\
-                not cls._check_tex(path_normal, field, slot):
+            if not cls._check_texture(path_albedo, field, slot) or\
+                not cls._check_texture(path_normal, field, slot):
                 return None
             
             tiles[slot][0] = path_albedo
@@ -98,7 +98,7 @@ class Validator:
             path_mask =\
                 abspath(getattr(context.scene.tile_injector, f"mask_texture_{slot}"))
             field = getattr(Inputs, f"mask_texture_{slot}").value
-            if not cls._check_tex(path_mask, field, slot):
+            if not cls._check_texture(path_mask, field, slot):
                 return None
             
             masks[slot] = path_mask
