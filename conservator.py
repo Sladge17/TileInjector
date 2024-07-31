@@ -1,5 +1,10 @@
 from bpy.types import PropertyGroup
-from bpy.props import StringProperty, FloatVectorProperty, BoolProperty, FloatProperty
+from bpy.props import (
+    StringProperty,
+    FloatProperty,
+    BoolProperty,
+    FloatVectorProperty,
+)
 
 from inputs import Inputs
 
@@ -61,11 +66,16 @@ class UI_Property(PropertyGroup):
         subtype='COLOR',
     )
     mask_texture_1 : StringProperty(
-        name=Inputs.mask_texture_0.value,
+        name=Inputs.mask_texture_1.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
     )
 
+    albedo_texture_2 : StringProperty(
+        name=Inputs.albedo_texture_2.value,
+        description="Path to tile albedo texture",
+        subtype='FILE_PATH',
+    )
     scale_albedo_2 : FloatProperty(
         name=Inputs.scale_albedo_2.value,
         description="Scale factor for tile albedo texture",
@@ -86,11 +96,16 @@ class UI_Property(PropertyGroup):
         subtype='COLOR',
     )
     mask_texture_2 : StringProperty(
-        name=Inputs.mask_texture_0.value,
+        name=Inputs.mask_texture_2.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
     )
 
+    albedo_texture_3 : StringProperty(
+        name=Inputs.albedo_texture_3.value,
+        description="Path to tile albedo texture",
+        subtype='FILE_PATH',
+    )
     scale_albedo_3 : FloatProperty(
         name=Inputs.scale_albedo_3.value,
         description="Scale factor for tile albedo texture",
@@ -111,7 +126,7 @@ class UI_Property(PropertyGroup):
         subtype='COLOR',
     )
     mask_texture_3 : StringProperty(
-        name=Inputs.mask_texture_0.value,
+        name=Inputs.mask_texture_3.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
     )
