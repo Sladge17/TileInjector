@@ -33,7 +33,10 @@ class Material:
 
 
     def _get_nodes_by_type(self, node_type: str):
-        return [node for node in self.material.node_tree.nodes.values() if node.type == node_type]
+        return [
+            node for node in self.material.node_tree.nodes.values()\
+            if node.type == node_type
+        ]
 
     
     def fix_tex_normal(self):
@@ -80,23 +83,39 @@ class Material:
     def _set_uv_tex_uniq(self, nodes_tex_uniq: dict, location: list):
         node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
         node_uv_map.uv_map = "UV1"
-        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq['Albedo'].inputs['Vector'])
-        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq['Metallic'].inputs['Vector'])
-        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq['Roughness'].inputs['Vector'])
-        self._links.new(node_uv_map.outputs['UV'], nodes_tex_uniq['Normal'].inputs['Vector'])
+        self._links.new(
+            node_uv_map.outputs['UV'],
+            nodes_tex_uniq['Albedo'].inputs['Vector'],
+        )
+        self._links.new(
+            node_uv_map.outputs['UV'],
+            nodes_tex_uniq['Metallic'].inputs['Vector'],
+        )
+        self._links.new(
+            node_uv_map.outputs['UV'],
+            nodes_tex_uniq['Roughness'].inputs['Vector'],
+        )
+        self._links.new(
+            node_uv_map.outputs['UV'],
+            nodes_tex_uniq['Normal'].inputs['Vector'],
+        )
 
 
-    def _get_block_uv_tile(self, location: list, scale: float):
+    def _get_block_uv_tile(self, location: list, scales: tuple) -> list:
         node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
         node_uv_map.uv_map = "UV2"
-        location[0] += 300
-        node_math = self._create_node_by_type('ShaderNodeVectorMath', location)
-        node_math.operation = 'MULTIPLY'
-        node_math.inputs[1].default_value = (scale,) * 3
-        self._links.new(node_uv_map.outputs['UV'], node_math.inputs['Vector'])
-        return node_math
-    
-    
+        location = self._get_shifted_origin(location, 300, 200)
+        nodes_math = [None] * 4
+        for index in range(len(nodes_math)):
+            node_math = self._create_node_by_type('ShaderNodeVectorMath', location)
+            node_math.operation = 'MULTIPLY'
+            node_math.inputs[1].default_value = (scales[index],) * 3
+            self._links.new(node_uv_map.outputs['UV'], node_math.inputs['Vector'])
+            nodes_math[index] = node_math
+            location = self._get_shifted_origin(location, 0, -200)
+        return nodes_math
+
+
     @staticmethod
     def _get_shifted_origin(origin: list, shift_x: int, shift_y: int) -> list:
         return [origin[0] + shift_x, origin[1] + shift_y]
@@ -104,17 +123,16 @@ class Material:
     
     def _set_nodes_tex_uniq_tiled_by_block(
             self,
-            tiles: tuple,
+            tiles,
             origin: list,
             block_uv_tile,
             node_rgb,
             nodes_tex_uniq,
-            index: int,
             is_normal: bool = False
 
         ):
         node_tex = self._create_node_by_type('ShaderNodeTexImage', origin)
-        node_tex.image = bpy.data.images.load(tiles[index][int(is_normal)])
+        node_tex.image = bpy.data.images.load(tiles[int(is_normal)])
         node_mix_1 = Group_MixByColor.get_group(
             self.material.name,
             self._get_shifted_origin(origin, 300, 50),
@@ -124,28 +142,67 @@ class Material:
             self._get_shifted_origin(origin, 300, -150),
         )
 
-        self._links.new(block_uv_tile.outputs['Vector'], node_tex.inputs[0])
+        self._links.new(
+            block_uv_tile.outputs['Vector'],
+            node_tex.inputs[0],
+        )
         
         if not is_normal:
-            self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Color'])
-            self._links.new(nodes_tex_uniq['Albedo'].outputs['Color'], node_mix_1.inputs['Color1'])
-            self._links.new(node_tex.outputs['Color'], node_mix_1.inputs['Color2'])
+            self._links.new(
+                node_rgb.outputs['Color'],
+                node_mix_1.inputs['Color'],
+            )
+            self._links.new(
+                nodes_tex_uniq['Albedo'].outputs['Color'],
+                node_mix_1.inputs['Color1'],
+            )
+            self._links.new(
+                node_tex.outputs['Color'],
+                node_mix_1.inputs['Color2'],
+            )
 
-            self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Color'])
-            self._links.new(nodes_tex_uniq['Metallic'].outputs['Color'], node_mix_2.inputs['Color1'])
-            self._links.new(node_tex.outputs['Alpha'], node_mix_2.inputs['Color2'])
+            self._links.new(
+                node_rgb.outputs['Color'],
+                node_mix_2.inputs['Color'],
+            )
+            self._links.new(
+                nodes_tex_uniq['Metallic'].outputs['Color'],
+                node_mix_2.inputs['Color1'],
+            )
+            self._links.new(
+                node_tex.outputs['Alpha'],
+                node_mix_2.inputs['Color2'],
+            )
 
             nodes_tex_uniq['Albedo'] = node_mix_1
             nodes_tex_uniq['Metallic'] = node_mix_2
             return
         
-        self._links.new(node_rgb.outputs['Color'], node_mix_2.inputs['Color'])
-        self._links.new(nodes_tex_uniq['Normal'].outputs['Color'], node_mix_2.inputs['Color1'])
-        self._links.new(node_tex.outputs['Color'], node_mix_2.inputs['Color2'])
+        self._links.new(
+            node_rgb.outputs['Color'],
+            node_mix_2.inputs['Color'],
+        )
+        self._links.new(
+            nodes_tex_uniq['Normal'].outputs['Color'],
+            node_mix_2.inputs['Color1'],
+        )
+        self._links.new(
+            node_tex.outputs['Color'],
+            node_mix_2.inputs['Color2'],
+        )
 
-        self._links.new(node_rgb.outputs['Color'], node_mix_1.inputs['Color'])
-        self._links.new(nodes_tex_uniq['Roughness'].outputs['Color'], node_mix_1.inputs['Color1'])
-        self._links.new(node_tex.outputs['Alpha'], node_mix_1.inputs['Color2'])
+        self._links.new(
+            node_rgb.outputs['Color'],
+            node_mix_1.inputs['Color'],
+        )
+        self._links.new(
+            nodes_tex_uniq['Roughness'].outputs['Color'],
+            node_mix_1.inputs['Color1'],
+        )
+        self._links.new(
+            node_tex.outputs['Alpha'],
+            node_mix_1.inputs['Color2'],
+        )
 
         nodes_tex_uniq['Roughness'] = node_mix_1
         nodes_tex_uniq['Normal'] = node_mix_2
@@ -154,10 +211,10 @@ class Material:
     
     def _set_nodes_tex_uniq_tiled(
             self,
-            tiles: tuple,
-            mix_colors: tuple,
+            tiles: list,
+            masks: list,
             nodes_tex_uniq: dict,
-            block_uv_tile,
+            block_uv_tile: list,
         ):
         origin_node_rgb = [-1450, 200]
         origin_block_a = [-900, 850]
@@ -165,13 +222,22 @@ class Material:
 
         for index in range(4):
             node_rgb = self._create_node_by_type('ShaderNodeRGB', origin_node_rgb)
-            node_rgb.outputs['Color'].default_value = mix_colors[index]
+            node_rgb.outputs['Color'].default_value = masks[index]
 
             self._set_nodes_tex_uniq_tiled_by_block(
-                tiles, origin_block_a, block_uv_tile, node_rgb, nodes_tex_uniq, index
+                tiles[index],
+                origin_block_a,
+                block_uv_tile[index],
+                node_rgb,
+                nodes_tex_uniq,
             )
             self._set_nodes_tex_uniq_tiled_by_block(
-                tiles, origin_block_n, block_uv_tile, node_rgb, nodes_tex_uniq, index, True
+                tiles[index],
+                origin_block_n,
+                block_uv_tile[index],
+                node_rgb,
+                nodes_tex_uniq,
+                True,
             )
             
             origin_node_rgb = self._get_shifted_origin(origin_node_rgb, 0, -200)
@@ -183,10 +249,22 @@ class Material:
         node_shader = self._get_nodes_by_type('BSDF_PRINCIPLED')[0]
         node_normal = self._get_nodes_by_type('NORMAL_MAP')[0]
 
-        self._links.new(nodes_outputs['Albedo'].outputs['Color'], node_shader.inputs['Base Color'])
-        self._links.new(nodes_outputs['Metallic'].outputs['Color'], node_shader.inputs['Metallic'])
-        self._links.new(nodes_outputs['Roughness'].outputs['Color'], node_shader.inputs['Roughness'])
-        self._links.new(nodes_outputs['Normal'].outputs['Color'], node_normal.inputs['Color'])
+        self._links.new(
+            nodes_outputs['Albedo'].outputs['Color'],
+            node_shader.inputs['Base Color'],
+        )
+        self._links.new(
+            nodes_outputs['Metallic'].outputs['Color'],
+            node_shader.inputs['Metallic']
+        )
+        self._links.new(
+            nodes_outputs['Roughness'].outputs['Color'],
+            node_shader.inputs['Roughness']
+        )
+        self._links.new(
+            nodes_outputs['Normal'].outputs['Color'],
+            node_normal.inputs['Color']
+        )
 
     
     def _change_tiles(self, tiles: tuple):
@@ -203,10 +281,10 @@ class Material:
                     break                
     
     
-    def _change_mix_colors(self, mix_colors: tuple):
+    def _change_mix_colors(self, masks: list):
         nodes_rgb = self._get_nodes_by_type('RGB')
         for index in range(len(nodes_rgb)):
-            nodes_rgb[index].outputs['Color'].default_value = mix_colors[index]
+            nodes_rgb[index].outputs['Color'].default_value = masks[index]
 
 
     def _change_scale(self, scale: float):
@@ -214,21 +292,27 @@ class Material:
         node_math.inputs[1].default_value = (scale,) * 3        
 
     
-    def _change_node_parameters(self, tiles: tuple, mix_colors: tuple, scale: float):
+    def _change_node_parameters(self, tiles: tuple, masks: list, scale: float):
         self._change_tiles(tiles)
-        self._change_mix_colors(mix_colors)
+        self._change_mix_colors(masks)
         self._change_scale(scale)
     
     
-    def set_tex_tile(self, tiles: tuple, mix_colors: tuple, scale: float,):
-        if self._is_tiled:
-            self._change_node_parameters(tiles, mix_colors, scale)
-            return self
+    def set_tex_tile(
+            self,
+            tiles: list,
+            scales: tuple,
+            is_masks_texture: tuple,
+            masks: list,
+        ):
+        # if self._is_tiled:
+        #     self._change_node_parameters(tiles, masks, scale)
+        #     return self
         
         nodes_tex_uniq = self._get_nodes_tex_uniq()
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])
-        block_uv_tile = self._get_block_uv_tile([-2000, 0], scale)        
-        self._set_nodes_tex_uniq_tiled(tiles, mix_colors, nodes_tex_uniq, block_uv_tile)
+        block_uv_tile = self._get_block_uv_tile([-2000, 0], scales)     
+        self._set_nodes_tex_uniq_tiled(tiles, masks, nodes_tex_uniq, block_uv_tile)
         self._set_links_shader(nodes_tex_uniq)
         return self
