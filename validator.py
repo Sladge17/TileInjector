@@ -48,7 +48,7 @@ class Validator:
 
     @classmethod
     def get_tiles(cls, context) -> list:
-        tiles = [[None] * 2] * 4
+        tiles = [[None] * 2 for _ in range(4)]
         for slot in range(4):
             path_albedo = getattr(context.scene.tile_injector, f"albedo_texture_{slot}")
             path_normal = abspath(cls._get_path_normal(path_albedo))
