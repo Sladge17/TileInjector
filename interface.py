@@ -11,28 +11,24 @@ class VIEW3D_PT_tile_injector(Panel):
     bl_label = 'Tile Injector'
 
 
-    def draw(self, context):
-        layout = self.layout
-        raw_input = layout.row()
-        raw_input.prop(context.scene.tile_injector, Inputs.tile_albedo_0.name)
-        raw_input.prop(context.scene.tile_injector, Inputs.mix_color_0.name)
-
-        raw_input = layout.row()
-        raw_input.prop(context.scene.tile_injector, Inputs.tile_albedo_1.name)
-        raw_input.prop(context.scene.tile_injector, Inputs.mix_color_1.name)
-
-        raw_input = layout.row()
-        raw_input.prop(context.scene.tile_injector, Inputs.tile_albedo_2.name)
-        raw_input.prop(context.scene.tile_injector, Inputs.mix_color_2.name)
-
-        raw_input = layout.row()
-        raw_input.prop(context.scene.tile_injector, Inputs.tile_albedo_3.name)
-        raw_input.prop(context.scene.tile_injector, Inputs.mix_color_3.name)
-
-        raw_input = layout.row()
-        raw_input.prop(context.scene.tile_injector, Inputs.scale.name)
+    def _draw_tile_box(self, layout, context, index:int) -> None:
+        tile_box = layout.column().box()
+        tile_box.label(text=getattr(Inputs, f"label_{index}").value)
+        tile_box.prop(context.scene.tile_injector, getattr(Inputs, f"albedo_texture_{index}").name)
+        tile_box.prop(context.scene.tile_injector, getattr(Inputs, f"scale_albedo_{index}").name)
+        tile_box.prop(context.scene.tile_injector, getattr(Inputs, f"is_mask_texture_{index}").name)
+        if getattr(context.scene.tile_injector, f"is_mask_texture_{index}"):
+            tile_box.prop(context.scene.tile_injector, getattr(Inputs, f"mask_texture_{index}").name)
+            return
         
-        raw_input = layout.row()
+        tile_box.row().prop(context.scene.tile_injector, getattr(Inputs, f"mask_color_{index}").name)
+
+
+    def draw(self, context):
+        layout = self.layout        
+        for index in range(4):
+            self._draw_tile_box(layout, context, index)        
+        
         column_exec = layout.column()
         column_exec.scale_y = 1.4
         column_exec.operator(
