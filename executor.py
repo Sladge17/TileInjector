@@ -153,19 +153,13 @@ class MATERIAL_OT_tile_injector(Operator):
         if not self._check_texs(context):
             return {'CANCELLED'}
         
-        tiles = self._get_tiles(context)
-        mix_colors = self._get_mix_colors(context)
-
-        # print(mix_colors)
-        # return {'FINISHED'}
-        
         Group_MixByColor.init_group()
         material = Material(
             donor=sample.first_name,
             name="TILED_Material",
         ).fix_tex_normal().set_tex_tile(
-            tiles=tiles,
-            mix_colors=mix_colors,
+            tiles=self._get_tiles(context),
+            mix_colors=self._get_mix_colors(context),
             scale=context.scene.tile_injector.scale,
         )
         sample.set_material(material=material)
