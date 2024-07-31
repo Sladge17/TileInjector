@@ -16,9 +16,9 @@ class Validator:
     
     
     @classmethod
-    def _check_tex(cls, path: str, slot: str) -> bool:
+    def _check_tex(cls, path: str, field: str, slot: str) -> bool:
         if not path:
-            Logger.empty_path(slot)
+            Logger.empty_path(field, slot)
             return False
 
         if not osp.isfile(path):
@@ -53,11 +53,54 @@ class Validator:
             path_albedo = getattr(context.scene.tile_injector, f"albedo_texture_{slot}")
             path_normal = abspath(cls._get_path_normal(path_albedo))
             path_albedo = abspath(path_albedo)
-            if not cls._check_tex(path_albedo, slot) or\
-                not cls._check_tex(path_normal, slot):
+            field = getattr(Inputs, f"albedo_texture_{slot}").value
+            if not cls._check_tex(path_albedo, field, slot) or\
+                not cls._check_tex(path_normal, field, slot):
                 return None
             
             tiles[slot][0] = path_albedo
             tiles[slot][1] = path_normal
 
         return tiles
+    
+
+    @classmethod
+    def get_scales(cls, context) -> tuple:
+        return (
+            context.scene.tile_injector.scale_albedo_0,
+            context.scene.tile_injector.scale_albedo_1,
+            context.scene.tile_injector.scale_albedo_2,
+            context.scene.tile_injector.scale_albedo_3,
+        )
+    
+
+    @classmethod
+    def get_is_masks_texture(cls, context) -> tuple:
+        return (
+            context.scene.tile_injector.is_mask_texture_0,
+            context.scene.tile_injector.is_mask_texture_1,
+            context.scene.tile_injector.is_mask_texture_2,
+            context.scene.tile_injector.is_mask_texture_3,
+        )
+    
+
+    @classmethod
+    def get_masks(cls, context, is_masks_texture) -> list:
+        masks = [None] * 4
+        for slot in range(4):
+            if not is_masks_texture[slot]:
+                masks[slot] = [
+                    *list(getattr(context.scene.tile_injector, f"mask_color_{slot}")),
+                    1.0,
+                ]
+                continue
+
+            path_mask =\
+                abspath(getattr(context.scene.tile_injector, f"mask_texture_{slot}"))
+            field = getattr(Inputs, f"mask_texture_{slot}").value
+            if not cls._check_tex(path_mask, field, slot):
+                return None
+            
+            masks[slot] = path_mask
+
+        return masks
