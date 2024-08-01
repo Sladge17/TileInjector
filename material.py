@@ -46,9 +46,9 @@ class Material:
         return self
     
 
-    def _create_node_by_type(self, node_type: str, location: tuple):
+    def _create_node_by_type(self, node_type: str, origin: tuple):
         node = self._nodes.new(type=node_type)
-        node.location = location
+        node.location = origin
         return node
 
     
@@ -77,8 +77,8 @@ class Material:
             self._links.remove(node.outputs['Color'].links[0])
 
     
-    def _set_uv_tex_uniq(self, nodes_tex_uniq: dict, location: list):
-        node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
+    def _set_uv_tex_uniq(self, nodes_tex_uniq: dict, origin: list):
+        node_uv_map = self._create_node_by_type('ShaderNodeUVMap', origin)
         node_uv_map.uv_map = "UV1"
         self._links.new(
             node_uv_map.outputs['UV'],
@@ -323,9 +323,8 @@ class Material:
         
         origin = [-2400, 0]
         node_uv_tile = self._get_node_uv_tile(origin)
-        origin = self._get_shifted_origin(origin, 300, 200)
         nodes_tile_scale = self._get_nodes_tile_scale(
-            origin,
+            self._get_shifted_origin(origin, 300, 200),
             tiles_scale,
             node_uv_tile,
         )     
@@ -338,7 +337,7 @@ class Material:
             node_uv_tile,
             nodes_tile_scale,
         )
-        
+
         self._set_links_shader(nodes_tex_uniq)
         return self
     

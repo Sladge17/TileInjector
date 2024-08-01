@@ -40,23 +40,20 @@ class MATERIAL_OT_tile_injector(Operator):
         if not tiles:
             return {'CANCELLED'}
         
-        tiles_scale = Validator.get_tiles_scale(context)
         is_masks_texture = Validator.get_is_masks_texture(context)
         masks = Validator.get_masks(context, is_masks_texture)
         if not masks:
             return {'CANCELLED'}
         
-        masks_scale = Validator.get_masks_scale(context)
-
         Group_MixByColor.init_group()
         material = Material(
             name_suffix="TILED",
         ).fix_tex_normal().set_tex_tile(
             tiles=tiles,
-            tiles_scale=tiles_scale,
+            tiles_scale=Validator.get_tiles_scale(context),
             is_masks_texture=is_masks_texture,
             masks=masks,
-            masks_scale=masks_scale,
+            masks_scale=Validator.get_masks_scale(context),
         )
         Loger.created_material(material.material_name)
         sample.set_material(material=material.material)
