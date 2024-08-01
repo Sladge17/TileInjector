@@ -40,6 +40,14 @@ class UI_Property(PropertyGroup):
         description="Mixing textures texture",
         subtype='FILE_PATH',
     )
+    scale_mask_0 : FloatProperty(
+        name=Inputs.scale_mask_0.value,
+        description="Scale factor for tile mask texture",
+        default=1.0,
+        min=0.001,
+        soft_max=2.0,
+        subtype='FACTOR',
+    )
 
     albedo_texture_1 : StringProperty(
         name=Inputs.albedo_texture_1.value,
@@ -69,6 +77,14 @@ class UI_Property(PropertyGroup):
         name=Inputs.mask_texture_1.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
+    )
+    scale_mask_1 : FloatProperty(
+        name=Inputs.scale_mask_1.value,
+        description="Scale factor for tile mask texture",
+        default=1.0,
+        min=0.001,
+        soft_max=2.0,
+        subtype='FACTOR',
     )
 
     albedo_texture_2 : StringProperty(
@@ -100,6 +116,14 @@ class UI_Property(PropertyGroup):
         description="Mixing textures texture",
         subtype='FILE_PATH',
     )
+    scale_mask_2 : FloatProperty(
+        name=Inputs.scale_mask_2.value,
+        description="Scale factor for tile mask texture",
+        default=1.0,
+        min=0.001,
+        soft_max=2.0,
+        subtype='FACTOR',
+    )
 
     albedo_texture_3 : StringProperty(
         name=Inputs.albedo_texture_3.value,
@@ -129,4 +153,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.mask_texture_3.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
+    )
+    scale_mask_3 : FloatProperty(
+        name=Inputs.scale_mask_3.value,
+        description="Scale factor for tile mask texture",
+        default=1.0,
+        min=0.001,
+        soft_max=2.0,
+        subtype='FACTOR',
     )
