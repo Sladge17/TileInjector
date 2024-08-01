@@ -13,7 +13,7 @@ class Material:
     @staticmethod
     def _get_material(name_suffix: str):
         material_donor_name =\
-            bpy.context.active_object.data.materials[0].name
+            bpy.context.active_object.active_material.name
         if name_suffix in material_donor_name:
             material_donor_name = material_donor_name\
                 [: material_donor_name.index(name_suffix) - 1]
