@@ -2,7 +2,7 @@ from bpy.types import Operator
 
 from sampler import Sampler
 from validator import Validator
-from logger import Logger
+from loger import Loger
 from group_mix_by_color import Group_MixByColor
 from material import Material
 
@@ -33,7 +33,7 @@ class MATERIAL_OT_tile_injector(Operator):
             .set_filter_by_type(target_type='MESH')\
             .check_uv(channels=2)
         if not sample.length:
-            Logger.empty_sample()
+            Loger.empty_sample()
             return {'CANCELLED'}
 
         tiles = Validator.get_tiles(context)
@@ -55,7 +55,7 @@ class MATERIAL_OT_tile_injector(Operator):
             is_masks_texture=is_masks_texture,
             masks=masks,
         )
-        Logger.created_material(material.material_name)
+        Loger.created_material(material.material_name)
         sample.set_material(material=material.material)
         return {'FINISHED'}
     

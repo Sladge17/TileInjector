@@ -2,7 +2,7 @@ import bpy
 
 
 
-class Logger:
+class Loger:
     title_error = "ERROR"
     title_info = "INFO"
 

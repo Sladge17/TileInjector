@@ -1,7 +1,7 @@
 from bpy.path import abspath
 from os import path as osp
 
-from logger import Logger
+from loger import Loger
 from inputs import Inputs
 
 
@@ -18,19 +18,19 @@ class Validator:
     @classmethod
     def _check_texture(cls, path: str, field: str, slot: int) -> bool:
         if not path:
-            Logger.empty_path(field, slot)
+            Loger.empty_path(field, slot)
             return False
 
         if not osp.isfile(path):
-            Logger.file_not_exist(osp.basename(path), field, slot)
+            Loger.file_not_exist(osp.basename(path), field, slot)
             return False
         
         if not osp.getsize(path):
-            Logger.file_empty(osp.basename(path), field, slot)
+            Loger.file_empty(osp.basename(path), field, slot)
             return False
         
         if not osp.basename(path).split('.')[1] in cls._get_extensions():
-            Logger.file_not_image(osp.basename(path), field, slot)
+            Loger.file_not_image(osp.basename(path), field, slot)
             return False
         
         return True

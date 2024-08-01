@@ -1,6 +1,6 @@
 import bpy
 
-from logger import Logger
+from loger import Loger
 
 
 
@@ -13,7 +13,7 @@ class Sampler:
         selected_objects = bpy.context.selected_objects
         for obj in selected_objects:
             if not obj.type == target_type:
-                Logger.not_target_object(obj.name, target_type)
+                Loger.not_target_object(obj.name, target_type)
                 continue
             self._objects_names.append(obj.name)
         
@@ -40,12 +40,12 @@ class Sampler:
         bad_objects = []
         for obj_name in self._objects_names:
             if len(bpy.data.meshes[obj_name].uv_layers.values()) < channels:
-                Logger.uv_less_than_need(obj_name, channels)
+                Loger.uv_less_than_need(obj_name, channels)
                 bad_objects.append(obj_name)
                 continue
 
             if len(bpy.data.meshes[obj_name].uv_layers.values()) > channels:
-                Logger.uv_more_than_need(obj_name, channels)
+                Loger.uv_more_than_need(obj_name, channels)
             
             self._rename_uv(obj_name)
 
