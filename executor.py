@@ -55,7 +55,7 @@ class MATERIAL_OT_tile_injector(Operator):
             is_masks_texture=is_masks_texture,
             masks=masks,
         )
-        sample.set_material(material=material)
-        Logger.task_done()
+        Logger.created_material(material.material_name)
+        sample.set_material(material=material.material)
         return {'FINISHED'}
     

@@ -4,8 +4,22 @@ import bpy
 
 class Logger:
     title_error = "ERROR"
+    title_info = "INFO"
 
 
+    @classmethod
+    def _draw_message_info(cls, message):
+        print(f"{cls.title_info}: {message}")
+        def draw_message(self, context):
+            self.layout.label(text=message)
+        
+        bpy.context.window_manager.popup_menu(
+            draw_message,
+            title=cls.title_info,
+            icon='INFO'
+        )
+
+    
     @classmethod
     def _draw_message_error(cls, message):
         print(f"\033[31m{cls.title_error}: {message}\033[37m")
@@ -20,8 +34,8 @@ class Logger:
 
 
     @classmethod
-    def task_done(cls):
-        print("INFO: Successfully completed")
+    def created_material(cls, material_name: str):
+        cls._draw_message_info(f"Created tiled material: {material_name}")
 
 
     @classmethod

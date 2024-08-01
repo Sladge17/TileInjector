@@ -6,7 +6,7 @@ from group_mix_by_color import Group_MixByColor
 
 class Material:
     def __init__(self, name_suffix: str):
-        self.material = self._get_material(name_suffix)
+        self._material = self._get_material(name_suffix)
         self._set_nodespace()
 
     
@@ -23,15 +23,25 @@ class Material:
         return material
     
 
+    @property
+    def material(self):
+        return self._material
+    
+
+    @property
+    def material_name(self):
+        return self._material.name
+    
+
     def _set_nodespace(self):
-        self.material.use_nodes = True
-        self._nodes = self.material.node_tree.nodes
-        self._links = self.material.node_tree.links
+        self._material.use_nodes = True
+        self._nodes = self._material.node_tree.nodes
+        self._links = self._material.node_tree.links
 
 
     def _get_nodes_by_type(self, node_type: str):
         return [
-            node for node in self.material.node_tree.nodes.values()\
+            node for node in self._material.node_tree.nodes.values()\
             if node.type == node_type
         ]
 
@@ -131,11 +141,11 @@ class Material:
         node_tex = self._create_node_by_type('ShaderNodeTexImage', origin)
         node_tex.image = bpy.data.images.load(tiles[int(is_normal)])
         node_mix_1 = Group_MixByColor.get_group(
-            self.material.name,
+            self._material.name,
             self._get_shifted_origin(origin, 300, 50),
         )
         node_mix_2 = Group_MixByColor.get_group(
-            self.material.name,
+            self._material.name,
             self._get_shifted_origin(origin, 300, -150),
         )
 
