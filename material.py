@@ -126,8 +126,8 @@ class Material:
             tiles,
             origin: list,
             block_uv_tile,
-            node_rgb,
-            nodes_tex_uniq,
+            node_mask,
+            nodes_tex_uniq: dict,
             is_normal: bool = False
 
         ):
@@ -149,7 +149,7 @@ class Material:
         
         if not is_normal:
             self._links.new(
-                node_rgb.outputs['Color'],
+                node_mask.outputs['Color'],
                 node_mix_1.inputs['Color'],
             )
             self._links.new(
@@ -162,7 +162,7 @@ class Material:
             )
 
             self._links.new(
-                node_rgb.outputs['Color'],
+                node_mask.outputs['Color'],
                 node_mix_2.inputs['Color'],
             )
             self._links.new(
@@ -179,7 +179,7 @@ class Material:
             return
         
         self._links.new(
-            node_rgb.outputs['Color'],
+            node_mask.outputs['Color'],
             node_mix_2.inputs['Color'],
         )
         self._links.new(
@@ -192,7 +192,7 @@ class Material:
         )
 
         self._links.new(
-            node_rgb.outputs['Color'],
+            node_mask.outputs['Color'],
             node_mix_1.inputs['Color'],
         )
         self._links.new(
@@ -209,38 +209,61 @@ class Material:
         node_tex.image.colorspace_settings.name = 'Non-Color'
 
     
+    def _get_node_mask(
+            self,
+            is_masks_texture: tuple,
+            masks: list,
+            index: int,
+            origin: list,
+        ):
+        if not is_masks_texture[index]:
+            node_mask = self._create_node_by_type('ShaderNodeRGB', origin)
+            node_mask.outputs['Color'].default_value = masks[index]
+            return node_mask
+        
+        node_mask = self._create_node_by_type('ShaderNodeTexImage', origin)
+        node_mask.image = bpy.data.images.load(masks[index])
+        node_mask.image.colorspace_settings.name = 'Non-Color'
+        return node_mask
+    
+    
     def _set_nodes_tex_uniq_tiled(
             self,
             tiles: list,
+            is_masks_texture: tuple,
             masks: list,
             nodes_tex_uniq: dict,
             block_uv_tile: list,
         ):
-        origin_node_rgb = [-1450, 200]
+        origin_node_mask = [-1450, 200]
         origin_block_a = [-900, 850]
         origin_block_n = [-900, -750]
 
         for index in range(4):
-            node_rgb = self._create_node_by_type('ShaderNodeRGB', origin_node_rgb)
-            node_rgb.outputs['Color'].default_value = masks[index]
+            node_mask = self._get_node_mask(
+                is_masks_texture,
+                masks,
+                index,
+                origin_node_mask,
+            )
 
             self._set_nodes_tex_uniq_tiled_by_block(
                 tiles[index],
                 origin_block_a,
                 block_uv_tile[index],
-                node_rgb,
+                node_mask,
                 nodes_tex_uniq,
             )
             self._set_nodes_tex_uniq_tiled_by_block(
                 tiles[index],
                 origin_block_n,
                 block_uv_tile[index],
-                node_rgb,
+                node_mask,
                 nodes_tex_uniq,
                 True,
             )
             
-            origin_node_rgb = self._get_shifted_origin(origin_node_rgb, 0, -200)
+            origin_node_mask = self._get_shifted_origin(origin_node_mask, 0, -200)
             origin_block_a = self._get_shifted_origin(origin_block_a, 0, 400)
             origin_block_n = self._get_shifted_origin(origin_block_n, 0, -400)
 
@@ -313,6 +336,12 @@ class Material:
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])
         block_uv_tile = self._get_block_uv_tile([-2000, 0], scales)     
-        self._set_nodes_tex_uniq_tiled(tiles, masks, nodes_tex_uniq, block_uv_tile)
+        self._set_nodes_tex_uniq_tiled(
+            tiles,
+            is_masks_texture,
+            masks,
+            nodes_tex_uniq,
+            block_uv_tile,
+        )
         self._set_links_shader(nodes_tex_uniq)
         return self
