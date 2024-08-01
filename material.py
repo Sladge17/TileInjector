@@ -36,12 +36,13 @@ class Material:
         ]
 
     
-    def fix_tex_normal(self):
+    def fix_tex_uniq_color_space(self):
         nodes_tex = self._get_nodes_by_type('TEX_IMAGE')
         for node in nodes_tex:
-            if "normal" in node.image.name.lower():
-                node.image.colorspace_settings.name = 'Non-Color'
-                break
+            if "albedo" in node.image.name.lower():
+                continue
+            
+            node.image.colorspace_settings.name = 'Non-Color'
 
         return self
     

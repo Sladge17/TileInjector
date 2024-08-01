@@ -48,7 +48,7 @@ class MATERIAL_OT_tile_injector(Operator):
         Group_MixByColor.init_group()
         material = Material(
             name_suffix="TILED",
-        ).fix_tex_normal().set_tex_tile(
+        ).fix_tex_uniq_color_space().set_tex_tile(
             tiles=tiles,
             tiles_scale=Validator.get_tiles_scale(context),
             is_masks_texture=is_masks_texture,
