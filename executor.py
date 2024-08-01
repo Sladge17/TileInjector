@@ -18,6 +18,9 @@ class MATERIAL_OT_tile_injector(Operator):
         if not context.object.mode == 'OBJECT':
             return False
         
+        if not context.active_object.type == 'MESH':
+            return False
+        
         for obj in context.selected_objects:
             if obj.type == 'MESH':
                 return True
@@ -42,14 +45,10 @@ class MATERIAL_OT_tile_injector(Operator):
         masks = Validator.get_masks(context, is_masks_texture)
         if not masks:
             return {'CANCELLED'}
-        
-        # print(masks)
-        # return {'FINISHED'}
 
         Group_MixByColor.init_group()
         material = Material(
-            donor=sample.first_name,
-            name="TILED_Material",
+            name_suffix="TILED",
         ).fix_tex_normal().set_tex_tile(
             tiles=tiles,
             scales=scales,

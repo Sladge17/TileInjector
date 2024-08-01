@@ -5,24 +5,21 @@ from group_mix_by_color import Group_MixByColor
 
 
 class Material:
-    def __init__(self, donor: str, name: str):
-        self._is_tiled = self._check_donor_tiled(donor, name)
-        self.material = self._get_material(donor, name)
+    def __init__(self, name_suffix: str):
+        self.material = self._get_material(name_suffix)
         self._set_nodespace()
-
-
-    @staticmethod
-    def _check_donor_tiled(donor: str, name: str):
-        if name in bpy.data.meshes[donor].materials.values()[0].name:
-            return True
-        return False
 
     
     @staticmethod
-    def _get_material(donor: str, name: str):
-        donor_material_name = bpy.data.meshes[donor].materials.values()[0].name
-        material = bpy.data.meshes[donor].materials[donor_material_name].copy()
-        material.name = name
+    def _get_material(name_suffix: str):
+        material_donor_name =\
+            bpy.context.active_object.data.materials[0].name
+        if name_suffix in material_donor_name:
+            material_donor_name = material_donor_name\
+                [: material_donor_name.index(name_suffix) - 1]
+
+        material = bpy.data.materials[material_donor_name].copy()
+        material.name = f"{material_donor_name}_{name_suffix}"
         return material
     
 
@@ -290,37 +287,6 @@ class Material:
         )
 
     
-    def _change_tiles(self, tiles: tuple):
-        nodes_tex = self._get_nodes_by_type('TEX_IMAGE')
-        for node in nodes_tex:
-            for index in range(4):
-                if f"tile{index}_a" in node.image.name.split('.')[0].lower():
-                    node.image = bpy.data.images.load(tiles[index][0])
-                    break
-
-                if f"tile{index}_n" in node.image.name.split('.')[0].lower():
-                    node.image = bpy.data.images.load(tiles[index][1])
-                    node.image.colorspace_settings.name = 'Non-Color'
-                    break                
-    
-    
-    def _change_mix_colors(self, masks: list):
-        nodes_rgb = self._get_nodes_by_type('RGB')
-        for index in range(len(nodes_rgb)):
-            nodes_rgb[index].outputs['Color'].default_value = masks[index]
-
-
-    def _change_scale(self, scale: float):
-        node_math = self._get_nodes_by_type('VECT_MATH')[0]
-        node_math.inputs[1].default_value = (scale,) * 3        
-
-    
-    def _change_node_parameters(self, tiles: tuple, masks: list, scale: float):
-        self._change_tiles(tiles)
-        self._change_mix_colors(masks)
-        self._change_scale(scale)
-    
-    
     def set_tex_tile(
             self,
             tiles: list,
@@ -328,10 +294,6 @@ class Material:
             is_masks_texture: tuple,
             masks: list,
         ):
-        # if self._is_tiled:
-        #     self._change_node_parameters(tiles, masks, scale)
-        #     return self
-        
         nodes_tex_uniq = self._get_nodes_tex_uniq()
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])

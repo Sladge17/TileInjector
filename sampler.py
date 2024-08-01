@@ -9,18 +9,8 @@ class Sampler:
         self._objects_names = []
 
 
-    @staticmethod
-    def _check_empty_sample(selected_objects: list) -> bool:
-        if not len(selected_objects):
-            return True
-        return False
-
-
     def set_filter_by_type(self, target_type: str):
         selected_objects = bpy.context.selected_objects
-        if self._check_empty_sample(selected_objects):
-            return self
-        
         for obj in selected_objects:
             if not obj.type == target_type:
                 Logger.not_target_object(obj.name, target_type)
@@ -35,11 +25,6 @@ class Sampler:
         return len(self._objects_names)
     
 
-    @property
-    def first_name(self) -> str:
-        return self._objects_names[0]
-    
-
     @staticmethod
     def _rename_uv(obj_name):
         for index, value in enumerate(bpy.data.meshes[obj_name].uv_layers.values()[:2]):
@@ -52,9 +37,6 @@ class Sampler:
     
     
     def check_uv(self, channels: int):
-        if not self._objects_names:
-            return self
-
         bad_objects = []
         for obj_name in self._objects_names:
             if len(bpy.data.meshes[obj_name].uv_layers.values()) < channels:
