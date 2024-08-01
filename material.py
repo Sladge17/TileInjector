@@ -23,16 +23,6 @@ class Material:
         return material
     
 
-    @property
-    def material(self):
-        return self._material
-    
-
-    @property
-    def material_name(self):
-        return self._material.name
-    
-
     def _set_nodespace(self):
         self._material.use_nodes = True
         self._nodes = self._material.node_tree.nodes
@@ -108,18 +98,26 @@ class Material:
         )
 
 
-    def _get_block_uv_tile(self, location: list, scales: tuple) -> list:
-        node_uv_map = self._create_node_by_type('ShaderNodeUVMap', location)
-        node_uv_map.uv_map = "UV2"
-        location = self._get_shifted_origin(location, 300, 200)
+    def _get_node_uv_tile(self, origin: list):
+        node_uv_tile = self._create_node_by_type('ShaderNodeUVMap', origin)
+        node_uv_tile.uv_map = "UV2"
+        return node_uv_tile
+
+    
+    def _get_nodes_tile_scale(
+            self,
+            origin: list,
+            tiles_scale: tuple,
+            node_uv_tile
+        ) -> list:
         nodes_math = [None] * 4
         for index in range(len(nodes_math)):
-            node_math = self._create_node_by_type('ShaderNodeVectorMath', location)
+            node_math = self._create_node_by_type('ShaderNodeVectorMath', origin)
             node_math.operation = 'MULTIPLY'
-            node_math.inputs[1].default_value = (scales[index],) * 3
-            self._links.new(node_uv_map.outputs['UV'], node_math.inputs['Vector'])
+            node_math.inputs[1].default_value = (tiles_scale[index],) * 3
+            self._links.new(node_uv_tile.outputs['UV'], node_math.inputs['Vector'])
             nodes_math[index] = node_math
-            location = self._get_shifted_origin(location, 0, -200)
+            origin = self._get_shifted_origin(origin, 0, -200)
         return nodes_math
 
 
@@ -220,8 +218,10 @@ class Material:
             self,
             is_masks_texture: tuple,
             masks: list,
+            masks_scale: tuple,
             index: int,
             origin: list,
+            node_uv_tile,
         ):
         if not is_masks_texture[index]:
             node_mask = self._create_node_by_type('ShaderNodeRGB', origin)
@@ -231,6 +231,14 @@ class Material:
         node_mask = self._create_node_by_type('ShaderNodeTexImage', origin)
         node_mask.image = bpy.data.images.load(masks[index])
         node_mask.image.colorspace_settings.name = 'Non-Color'
+        node_math = self._create_node_by_type(
+            'ShaderNodeVectorMath',
+            self._get_shifted_origin(origin, -200, 0),
+        )
+        node_math.operation = 'MULTIPLY'
+        node_math.inputs[1].default_value = (masks_scale[index],) * 3
+        self._links.new(node_uv_tile.outputs['UV'], node_math.inputs['Vector'])
+        self._links.new(node_math.outputs['Vector'], node_mask.inputs['Vector'])
         return node_mask
     
     
@@ -239,10 +247,12 @@ class Material:
             tiles: list,
             is_masks_texture: tuple,
             masks: list,
+            masks_scale: tuple,
             nodes_tex_uniq: dict,
-            block_uv_tile: list,
+            node_uv_tile,
+            nodes_tile_scale: list,
         ):
-        origin_node_mask = [-1450, 200]
+        origin_node_mask = [-1600, 350]
         origin_block_a = [-900, 850]
         origin_block_n = [-900, -750]
 
@@ -250,27 +260,29 @@ class Material:
             node_mask = self._get_node_mask(
                 is_masks_texture,
                 masks,
+                masks_scale,
                 index,
                 origin_node_mask,
+                node_uv_tile,
             )
 
             self._set_nodes_tex_uniq_tiled_by_block(
                 tiles[index],
                 origin_block_a,
-                block_uv_tile[index],
+                nodes_tile_scale[index],
                 node_mask,
                 nodes_tex_uniq,
             )
             self._set_nodes_tex_uniq_tiled_by_block(
                 tiles[index],
                 origin_block_n,
-                block_uv_tile[index],
+                nodes_tile_scale[index],
                 node_mask,
                 nodes_tex_uniq,
                 True,
             )
             
-            origin_node_mask = self._get_shifted_origin(origin_node_mask, 0, -200)
+            origin_node_mask = self._get_shifted_origin(origin_node_mask, 0, -300)
             origin_block_a = self._get_shifted_origin(origin_block_a, 0, 400)
             origin_block_n = self._get_shifted_origin(origin_block_n, 0, -400)
 
@@ -300,20 +312,42 @@ class Material:
     def set_tex_tile(
             self,
             tiles: list,
-            scales: tuple,
+            tiles_scale: tuple,
             is_masks_texture: tuple,
             masks: list,
+            masks_scale: tuple,
         ):
         nodes_tex_uniq = self._get_nodes_tex_uniq()
         self._unlink_nodes_tex_uniq(nodes_tex_uniq)
         self._set_uv_tex_uniq(nodes_tex_uniq, [-1200, 0])
-        block_uv_tile = self._get_block_uv_tile([-2000, 0], scales)     
+        
+        origin = [-2400, 0]
+        node_uv_tile = self._get_node_uv_tile(origin)
+        origin = self._get_shifted_origin(origin, 300, 200)
+        nodes_tile_scale = self._get_nodes_tile_scale(
+            origin,
+            tiles_scale,
+            node_uv_tile,
+        )     
         self._set_nodes_tex_uniq_tiled(
             tiles,
             is_masks_texture,
             masks,
+            masks_scale,
             nodes_tex_uniq,
-            block_uv_tile,
+            node_uv_tile,
+            nodes_tile_scale,
         )
+        
         self._set_links_shader(nodes_tex_uniq)
         return self
+    
+
+    @property
+    def material(self):
+        return self._material
+    
+
+    @property
+    def material_name(self):
+        return self._material.name

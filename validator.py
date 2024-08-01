@@ -65,7 +65,7 @@ class Validator:
     
 
     @classmethod
-    def get_scales(cls, context) -> tuple:
+    def get_tiles_scale(cls, context) -> tuple:
         return (
             context.scene.tile_injector.scale_albedo_0,
             context.scene.tile_injector.scale_albedo_1,
@@ -104,3 +104,13 @@ class Validator:
             masks[slot] = path_mask
 
         return masks
+    
+
+    @classmethod
+    def get_masks_scale(cls, context) -> tuple:
+        return (
+            context.scene.tile_injector.scale_mask_0,
+            context.scene.tile_injector.scale_mask_1,
+            context.scene.tile_injector.scale_mask_2,
+            context.scene.tile_injector.scale_mask_3,
+        )
