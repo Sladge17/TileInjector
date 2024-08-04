@@ -110,7 +110,7 @@ class Group_MixByColor:
     
     
     @classmethod
-    def init_group(cls):
+    def set_group(cls):
         if cls._check_group_exist():
             return
         

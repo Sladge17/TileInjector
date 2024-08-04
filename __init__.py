@@ -6,6 +6,14 @@ from conservator import UI_Property
 from executor import MATERIAL_OT_tile_injector
 from interface import VIEW3D_PT_tile_injector
 
+from environment import Environment
+
+
+
+def set_environment():
+    Environment.set_albedo_textures()
+    Environment.set_mask_textures()
+    Environment.set_groups()
 
 
 def register():
@@ -38,4 +46,5 @@ bl_info = {
 
 
 if __name__ == "__main__":
+    set_environment()
     register()

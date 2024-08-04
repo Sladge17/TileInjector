@@ -3,7 +3,6 @@ from bpy.types import Operator
 from sampler import Sampler
 from validator import Validator
 from loger import Loger
-from group_mix_by_color import Group_MixByColor
 from material import Material
 
 
@@ -45,7 +44,6 @@ class MATERIAL_OT_tile_injector(Operator):
         if not masks:
             return {'CANCELLED'}
         
-        Group_MixByColor.init_group()
         material = Material(
             name_suffix="TILED",
         ).fix_tex_uniq_color_space().set_tex_tile(
