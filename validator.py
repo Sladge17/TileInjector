@@ -38,9 +38,6 @@ class Validator:
 
     @classmethod
     def _get_path_normal(cls, path_albedo: str) -> str:
-        if not path_albedo:
-            return path_albedo
-
         base_name = osp.basename(path_albedo).split('.')
         base_name = f"{base_name[0][:-1]}n.{base_name[1]}"
         return osp.join(osp.split(path_albedo)[0], base_name)
@@ -50,16 +47,21 @@ class Validator:
     def get_tiles(cls, context) -> list:
         tiles = [[None] * 2 for _ in range(4)]
         for slot in range(4):
-            path_albedo = getattr(context.scene.tile_injector, f"albedo_texture_{slot}")
-            path_normal = abspath(cls._get_path_normal(path_albedo))
-            path_albedo = abspath(path_albedo)
             field = getattr(Inputs, f"albedo_texture_{slot}").value
-            if not cls._check_texture(path_albedo, field, slot) or\
-                not cls._check_texture(path_normal, field, slot):
+            path_albedo = getattr(context.scene.tile_injector, f"albedo_texture_{slot}")
+            if not cls._check_texture(
+                abspath(path_albedo),
+                field,
+                slot,
+            ) or not cls._check_texture(
+                abspath(cls._get_path_normal(path_albedo)),
+                field,
+                slot,
+            ):
                 return None
-            
-            tiles[slot][0] = path_albedo
-            tiles[slot][1] = path_normal
+
+            tiles[slot][0] = abspath(path_albedo)
+            tiles[slot][1] = abspath(cls._get_path_normal(path_albedo))
 
         return tiles
     
