@@ -7,6 +7,7 @@ from bpy.props import (
 )
 
 from inputs import Inputs
+from properties_updater import PropertiesUpdater
 
 
 
@@ -15,6 +16,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.albedo_texture_0.value,
         description="Path to tile albedo texture",
         subtype='FILE_PATH',
+        update=PropertiesUpdater.update_albedo_texture_0,
+    )
+    is_preview_albedo_0 : BoolProperty(
+        name=Inputs.is_preview_albedo_0.value,
+        description="Flag for preview albedo texture",
+        default=True,
     )
     scale_albedo_0 : FloatProperty(
         name=Inputs.scale_albedo_0.value,
@@ -39,6 +46,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.mask_texture_0.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
+        update=PropertiesUpdater.update_mask_texture_0,
+    )
+    is_preview_mask_0 : BoolProperty(
+        name=Inputs.is_preview_mask_0.value,
+        description="Flag for preview mask texture",
+        default=False,
     )
     scale_mask_0 : FloatProperty(
         name=Inputs.scale_mask_0.value,
@@ -53,6 +66,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.albedo_texture_1.value,
         description="Path to tile albedo texture",
         subtype='FILE_PATH',
+        update=PropertiesUpdater.update_albedo_texture_1,
+    )
+    is_preview_albedo_1 : BoolProperty(
+        name=Inputs.is_preview_albedo_1.value,
+        description="Flag for preview albedo texture",
+        default=True,
     )
     scale_albedo_1 : FloatProperty(
         name=Inputs.scale_albedo_1.value,
@@ -77,6 +96,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.mask_texture_1.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
+        update=PropertiesUpdater.update_mask_texture_1,
+    )
+    is_preview_mask_1 : BoolProperty(
+        name=Inputs.is_preview_mask_1.value,
+        description="Flag for preview mask texture",
+        default=False,
     )
     scale_mask_1 : FloatProperty(
         name=Inputs.scale_mask_1.value,
@@ -91,6 +116,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.albedo_texture_2.value,
         description="Path to tile albedo texture",
         subtype='FILE_PATH',
+        update=PropertiesUpdater.update_albedo_texture_2,
+    )
+    is_preview_albedo_2 : BoolProperty(
+        name=Inputs.is_preview_albedo_2.value,
+        description="Flag for preview albedo texture",
+        default=True,
     )
     scale_albedo_2 : FloatProperty(
         name=Inputs.scale_albedo_2.value,
@@ -115,6 +146,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.mask_texture_2.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
+        update=PropertiesUpdater.update_mask_texture_2,
+    )
+    is_preview_mask_2 : BoolProperty(
+        name=Inputs.is_preview_mask_2.value,
+        description="Flag for preview mask texture",
+        default=False,
     )
     scale_mask_2 : FloatProperty(
         name=Inputs.scale_mask_2.value,
@@ -129,6 +166,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.albedo_texture_3.value,
         description="Path to tile albedo texture",
         subtype='FILE_PATH',
+        update=PropertiesUpdater.update_albedo_texture_3,
+    )
+    is_preview_albedo_3 : BoolProperty(
+        name=Inputs.is_preview_albedo_3.value,
+        description="Flag for preview albedo texture",
+        default=True,
     )
     scale_albedo_3 : FloatProperty(
         name=Inputs.scale_albedo_3.value,
@@ -153,6 +196,12 @@ class UI_Property(PropertyGroup):
         name=Inputs.mask_texture_3.value,
         description="Mixing textures texture",
         subtype='FILE_PATH',
+        update=PropertiesUpdater.update_mask_texture_3,
+    )
+    is_preview_mask_3 : BoolProperty(
+        name=Inputs.is_preview_mask_3.value,
+        description="Flag for preview mask texture",
+        default=False,
     )
     scale_mask_3 : FloatProperty(
         name=Inputs.scale_mask_3.value,
