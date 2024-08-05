@@ -59,6 +59,11 @@ class Loger:
 
 
     @classmethod
+    def invalid_active_object(cls, target_type):
+        cls._draw_message_error(f"Active object is not a {target_type.lower()}")
+
+
+    @classmethod
     def empty_path(cls, field: str, slot: int):
         cls._draw_message_error(f"Field \"{field}\" of slot \"Tile_{slot}\" is empty")
 
@@ -66,19 +71,19 @@ class Loger:
     @classmethod
     def file_not_exist(cls, file: str, field: str, slot: int):
         cls._draw_message_error(
-            f"File \"{file}\" in field \"{field}\" of slot \"Tile_{slot}\" does not exist"
+            f"File \"{file}\" from field \"{field}\" of slot \"Tile_{slot}\" does not exist"
         )
 
 
     @classmethod
     def file_empty(cls, file: str, field: str, slot: int):
         cls._draw_message_error(
-            f"File \"{file}\" in field \"{field}\" of slot \"Tile_{slot}\" is empty"
+            f"File \"{file}\" from field \"{field}\" of slot \"Tile_{slot}\" is empty"
         )
 
 
     @classmethod
     def file_not_image(cls, file: str, field: str, slot: int):
         cls._draw_message_error(
-            f"File \"{file}\" in field \"{field}\" of slot \"Tile_{slot}\" is not an image"
+            f"File \"{file}\" from field \"{field}\" of slot \"Tile_{slot}\" is not an image"
         )

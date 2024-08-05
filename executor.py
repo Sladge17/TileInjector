@@ -16,15 +16,8 @@ class MATERIAL_OT_tile_injector(Operator):
     def poll(cls, context):
         if not context.object.mode == 'OBJECT':
             return False
-        
-        if not context.active_object.type == 'MESH':
-            return False
-        
-        for obj in context.selected_objects:
-            if obj.type == 'MESH':
-                return True
-            
-        return False
+
+        return True
 
 
     def execute(self, context):
@@ -33,6 +26,10 @@ class MATERIAL_OT_tile_injector(Operator):
             .check_uv(channels=2)
         if not sample.length:
             Loger.empty_sample()
+            return {'CANCELLED'}
+        
+        if not context.active_object.type == 'MESH':
+            Loger.invalid_active_object(target_type='MESH')
             return {'CANCELLED'}
 
         tiles = Validator.get_tiles(context)
