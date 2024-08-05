@@ -6,14 +6,12 @@ from conservator import UI_Property
 from executor import MATERIAL_OT_tile_injector
 from interface import VIEW3D_PT_tile_injector
 
-from environment import Environment
+from group_mix_by_color import Group_MixByColor
 
 
 
 def set_environment():
-    Environment.set_albedo_textures()
-    Environment.set_mask_textures()
-    Environment.set_groups()
+    Group_MixByColor.set_group()
 
 
 def register():
