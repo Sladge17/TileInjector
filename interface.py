@@ -9,6 +9,7 @@ class VIEW3D_PT_tile_injector(Panel):
     bl_region_type = 'UI'
     bl_category = 'MaterialHelpers'
     bl_label = 'Tile Injector'
+    
     icon_scale = 6
 
 

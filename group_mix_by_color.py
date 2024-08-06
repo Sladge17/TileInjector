@@ -6,11 +6,12 @@ class Group_MixByColor:
     cursor = [0, 0]
     offset = (50, 100)
     channels = ('Red', 'Green', 'Blue')
+    name = "MixByColor"
 
 
     @classmethod
     def _check_group_exist(cls):
-        if "MixByColor" in bpy.data.node_groups.keys():
+        if cls.name in bpy.data.node_groups.keys():
             return True
         
         return False
@@ -79,21 +80,21 @@ class Group_MixByColor:
 
     @classmethod
     def _link_input_node(cls):
-        cls.input_node.outputs.new("NodeSocketColor", "Color1")
+        cls.input_node.outputs.new('NodeSocketColor', "Color1")
         for index in range(len(cls.mix_nodes)):
             cls.links.new(
                 cls.input_node.outputs['Color1'],
                 cls.mix_nodes[index].inputs['Color1'],
             )
             
-        cls.input_node.outputs.new("NodeSocketColor", "Color2")
+        cls.input_node.outputs.new('NodeSocketColor', "Color2")
         for index in range(len(cls.mix_nodes)):
             cls.links.new(
                 cls.input_node.outputs['Color2'],
                 cls.mix_nodes[index].inputs['Color2'],
             )
 
-        cls.input_node.outputs.new("NodeSocketColor", "Color")
+        cls.input_node.outputs.new('NodeSocketColor', "Color")
         cls.links.new(
             cls.input_node.outputs['Color'],
             cls.separate_node_mask.inputs['Color'],
@@ -102,7 +103,7 @@ class Group_MixByColor:
 
     @classmethod
     def _link_output_node(cls):
-        cls.output_node.inputs.new("NodeSocketColor", "Color")
+        cls.output_node.inputs.new('NodeSocketColor', "Color")
         cls.links.new(
             cls.combine_node.outputs['Color'],
             cls.output_node.inputs['Color'],
@@ -115,7 +116,7 @@ class Group_MixByColor:
             return
         
         group = bpy.data.node_groups.new(
-            name="MixByColor",
+            name=cls.name,
             type='ShaderNodeTree',
         )
         cls.nodes = group.nodes
@@ -134,6 +135,6 @@ class Group_MixByColor:
     @classmethod
     def get_group(cls, material:str, location:list=[0, 0]):
         group = bpy.data.materials[material].node_tree.nodes.new('ShaderNodeGroup')
-        group.node_tree = bpy.data.node_groups['MixByColor']
+        group.node_tree = bpy.data.node_groups[cls.name]
         group.location = location
         return group
