@@ -1,8 +1,8 @@
 from bpy.path import abspath
 from os import path as osp
 
-from loger import Loger
-from inputs import Inputs
+from .loger import Loger
+from .inputs import Inputs
 
 
 

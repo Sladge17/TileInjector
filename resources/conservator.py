@@ -6,8 +6,8 @@ from bpy.props import (
     FloatVectorProperty,
 )
 
-from inputs import Inputs
-from properties_updater import PropertiesUpdater
+from .inputs import Inputs
+from .properties_updater import PropertiesUpdater
 
 
 

@@ -1,6 +1,7 @@
 import bpy
 from bpy.types import Panel
-from inputs import Inputs
+
+from .inputs import Inputs
 
 
 

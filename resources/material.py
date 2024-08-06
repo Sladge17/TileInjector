@@ -1,6 +1,6 @@
 import bpy
 
-from node_groups import (
+from .node_groups import (
     Group_MixByColor,
     Group_MixByIntensity_N,
     Group_Color2MidFloat,

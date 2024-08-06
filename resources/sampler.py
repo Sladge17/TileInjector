@@ -1,6 +1,6 @@
 import bpy
 
-from loger import Loger
+from .loger import Loger
 
 
 

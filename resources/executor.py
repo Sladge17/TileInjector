@@ -1,11 +1,11 @@
 from bpy.types import Operator
 
-from sampler import Sampler
-from validator import Validator
-from loger import Loger
-from material import Material
+from .sampler import Sampler
+from .validator import Validator
+from .loger import Loger
+from .material import Material
 
-from node_groups import (
+from .node_groups import (
     Group_MixByColor,
     Group_MixByIntensity_N,
     Group_Color2MidFloat,

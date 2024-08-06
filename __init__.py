@@ -2,9 +2,11 @@ from bpy.types import Scene
 from bpy.props import PointerProperty
 from bpy.utils import register_class, unregister_class
 
-from conservator import UI_Property
-from executor import MATERIAL_OT_tile_injector
-from interface import VIEW3D_PT_tile_injector
+from resources import (
+    UI_Property,
+    MATERIAL_OT_tile_injector,
+    VIEW3D_PT_tile_injector,
+)
 
 
 
