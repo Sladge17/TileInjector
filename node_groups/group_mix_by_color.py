@@ -1,20 +1,14 @@
 import bpy
 
+from .group_abc import Group_ABC
 
 
-class Group_MixByColor:
+
+class Group_MixByColor(Group_ABC):
     cursor = [0, 0]
     offset = (50, 100)
     channels = ('Red', 'Green', 'Blue')
     name = "MixByColor"
-
-
-    @classmethod
-    def _check_group_exist(cls):
-        if cls.name in bpy.data.node_groups.keys():
-            return True
-        
-        return False
 
 
     @classmethod
@@ -130,11 +124,3 @@ class Group_MixByColor:
 
         cls._link_input_node()
         cls._link_output_node()
-
-
-    @classmethod
-    def get_group(cls, material:str, location:list=[0, 0]):
-        group = bpy.data.materials[material].node_tree.nodes.new('ShaderNodeGroup')
-        group.node_tree = bpy.data.node_groups[cls.name]
-        group.location = location
-        return group

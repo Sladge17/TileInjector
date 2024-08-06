@@ -1,19 +1,13 @@
 import bpy
 
+from .group_abc import Group_ABC
 
 
-class Group_Color2MidFloat:
+
+class Group_Color2MidFloat(Group_ABC):
     cursor = [0, 0]
     offset = (50, 50)
     name = "Color2MidFloat"
-
-
-    @classmethod
-    def _check_group_exist(cls):
-        if cls.name in bpy.data.node_groups.keys():
-            return True
-        
-        return False
 
 
     @classmethod
@@ -99,11 +93,3 @@ class Group_Color2MidFloat:
             input_node.outputs.new('NodeSocketColor', "Color")
         )
         cls._set_output_node(middle_float)
-
-
-    @classmethod
-    def get_group(cls, material:str, location:list=[0, 0]):
-        group = bpy.data.materials[material].node_tree.nodes.new('ShaderNodeGroup')
-        group.node_tree = bpy.data.node_groups[cls.name]
-        group.location = location
-        return group

@@ -1,19 +1,13 @@
 import bpy
 
+from .group_abc import Group_ABC
 
 
-class Group_MixByIntensity_N:
+
+class Group_MixByIntensity_N(Group_ABC):
     cursor = [0, 0]
     offset = (50, 50)
     name = "MixByIntensity_N"
-
-
-    @classmethod
-    def _check_group_exist(cls):
-        if cls.name in bpy.data.node_groups.keys():
-            return True
-        
-        return False
 
 
     @classmethod
@@ -319,11 +313,3 @@ class Group_MixByIntensity_N:
         )
 
         cls._set_output_node(base_normal_rotation)
-
-
-    @classmethod
-    def get_group(cls, material:str, location:list=[0, 0]):
-        group = bpy.data.materials[material].node_tree.nodes.new('ShaderNodeGroup')
-        group.node_tree = bpy.data.node_groups[cls.name]
-        group.location = location
-        return group
