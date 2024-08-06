@@ -5,6 +5,12 @@ from validator import Validator
 from loger import Loger
 from material import Material
 
+from node_groups import (
+    Group_MixByColor,
+    Group_MixByIntensity_N,
+    Group_Color2MidFloat,
+)
+
 
 
 class MATERIAL_OT_tile_injector(Operator):
@@ -18,9 +24,18 @@ class MATERIAL_OT_tile_injector(Operator):
             return False
 
         return True
+    
+
+    @classmethod
+    def _set_environment(cls):
+        Group_MixByColor.set_group()
+        Group_MixByIntensity_N.set_group()
+        Group_Color2MidFloat.set_group()
 
 
     def execute(self, context):
+        self._set_environment()
+
         sample = Sampler()\
             .set_filter_by_type(target_type='MESH')\
             .check_uv(channels=2)

@@ -6,18 +6,6 @@ from conservator import UI_Property
 from executor import MATERIAL_OT_tile_injector
 from interface import VIEW3D_PT_tile_injector
 
-from node_groups import (
-    Group_MixByColor,
-    Group_MixByIntensity_N,
-    Group_Color2MidFloat,
-)
-
-
-
-def set_environment():
-    Group_MixByColor.set_group()
-    Group_MixByIntensity_N.set_group()
-    Group_Color2MidFloat.set_group()
 
 
 def register():
@@ -50,5 +38,4 @@ bl_info = {
 
 
 if __name__ == "__main__":
-    set_environment()
     register()
