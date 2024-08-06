@@ -6,9 +6,11 @@ from conservator import UI_Property
 from executor import MATERIAL_OT_tile_injector
 from interface import VIEW3D_PT_tile_injector
 
-from group_mix_by_color import Group_MixByColor
-from group_mix_by_intensity_n import Group_MixByIntensity_N
-from group_color2midfloat import Group_Color2MidFloat
+from node_groups import (
+    Group_MixByColor,
+    Group_MixByIntensity_N,
+    Group_Color2MidFloat,
+)
 
 
 
