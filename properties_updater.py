@@ -12,8 +12,7 @@ class PropertiesUpdater:
 
         try:
             image = bpy.data.images.load(
-                abspath(context.scene.tile_injector.albedo_texture_0),
-                check_existing=True,
+                abspath(context.scene.tile_injector.albedo_texture_0)
             )
         except RuntimeError:
             return
@@ -29,8 +28,7 @@ class PropertiesUpdater:
 
         try:
             image = bpy.data.images.load(
-                abspath(context.scene.tile_injector.albedo_texture_1),
-                check_existing=True,
+                abspath(context.scene.tile_injector.albedo_texture_1)
             )
         except RuntimeError:
             return
@@ -46,8 +44,7 @@ class PropertiesUpdater:
 
         try:
             image = bpy.data.images.load(
-                abspath(context.scene.tile_injector.albedo_texture_2),
-                check_existing=True,
+                abspath(context.scene.tile_injector.albedo_texture_2)
             )
         except RuntimeError:
             return
@@ -63,8 +60,7 @@ class PropertiesUpdater:
 
         try:
             image = bpy.data.images.load(
-                abspath(context.scene.tile_injector.albedo_texture_3),
-                check_existing=True,
+                abspath(context.scene.tile_injector.albedo_texture_3)
             )
         except RuntimeError:
             return
@@ -80,8 +76,7 @@ class PropertiesUpdater:
 
         try:
             image = bpy.data.images.load(
-                abspath(context.scene.tile_injector.mask_texture_0),
-                check_existing=True,
+                abspath(context.scene.tile_injector.mask_texture_0)
             )
         except RuntimeError:
             return
@@ -97,8 +92,7 @@ class PropertiesUpdater:
 
         try:
             image = bpy.data.images.load(
-                abspath(context.scene.tile_injector.mask_texture_1),
-                check_existing=True,
+                abspath(context.scene.tile_injector.mask_texture_1)
             )
         except RuntimeError:
             return
@@ -114,8 +108,7 @@ class PropertiesUpdater:
 
         try:
             image = bpy.data.images.load(
-                abspath(context.scene.tile_injector.mask_texture_2),
-                check_existing=True,
+                abspath(context.scene.tile_injector.mask_texture_2)
             )
         except RuntimeError:
             return
@@ -131,8 +124,7 @@ class PropertiesUpdater:
 
         try:
             image = bpy.data.images.load(
-                abspath(context.scene.tile_injector.mask_texture_3),
-                check_existing=True,
+                abspath(context.scene.tile_injector.mask_texture_3)
             )
         except RuntimeError:
             return
