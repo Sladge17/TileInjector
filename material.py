@@ -1,6 +1,7 @@
 import bpy
 
 from group_mix_by_color import Group_MixByColor
+from group_mix_by_intensity_n import Group_MixByIntensity_N
 
 
 
@@ -35,17 +36,6 @@ class Material:
             if node.type == node_type
         ]
 
-    
-    def fix_tex_uniq_color_space(self):
-        nodes_tex = self._get_nodes_by_type('TEX_IMAGE')
-        for node in nodes_tex:
-            if "albedo" in node.image.name.lower():
-                continue
-            
-            node.image.colorspace_settings.name = 'Non-Color'
-
-        return self
-    
 
     def _create_node_by_type(self, node_type: str, origin: tuple):
         node = self._nodes.new(type=node_type)
@@ -75,7 +65,18 @@ class Material:
 
     def _unlink_nodes_tex_uniq(self, nodes_tex_uniq: dict):
         for node in nodes_tex_uniq.values():
+            if "normal" in node.image.name.lower():
+                normal_tex_node = node
+                continue
+
             self._links.remove(node.outputs['Color'].links[0])
+
+        normal_node = self._get_nodes_by_type('NORMAL_MAP')[0]
+        normal_node.location = (
+            normal_tex_node.location[0] + normal_tex_node.width + 50,
+            normal_tex_node.location[1],
+        )
+        self._links.remove(normal_node.outputs['Normal'].links[0])
 
     
     def _set_uv_tex_uniq(self, nodes_tex_uniq: dict, origin: list):
@@ -127,6 +128,32 @@ class Material:
         return [origin[0] + shift_x, origin[1] + shift_y]
     
     
+    def _get_node_mix_2(self, origin, is_normal):
+        if not is_normal:
+            return Group_MixByColor.get_group(
+                self._material.name,
+                origin,
+            )
+        
+        return Group_MixByIntensity_N.get_group(
+            self._material.name,
+            origin,
+        )
+    
+
+    def _get_node_normal(self, node_tex, origin):
+        node_normal = self._create_node_by_type(
+            'ShaderNodeNormalMap',
+            self._get_shifted_origin(origin, node_tex.width + 50, 0),
+        )
+        node_tex.image.colorspace_settings.name = 'Non-Color'
+        self._links.new(
+            node_tex.outputs['Color'],
+            node_normal.inputs['Color'],
+        )
+        return node_normal
+    
+    
     def _set_nodes_tex_uniq_tiled_by_block(
             self,
             tiles,
@@ -141,11 +168,11 @@ class Material:
         node_tex.image = bpy.data.images.load(tiles[int(is_normal)])
         node_mix_1 = Group_MixByColor.get_group(
             self._material.name,
-            self._get_shifted_origin(origin, 300, 50),
-        )
-        node_mix_2 = Group_MixByColor.get_group(
-            self._material.name,
-            self._get_shifted_origin(origin, 300, -150),
+            self._get_shifted_origin(origin, 500, 50),
+        )        
+        node_mix_2 = self._get_node_mix_2(
+            self._get_shifted_origin(origin, 500, -150),
+            is_normal,
         )
 
         self._links.new(
@@ -156,63 +183,67 @@ class Material:
         if not is_normal:
             self._links.new(
                 node_mask.outputs['Color'],
-                node_mix_1.inputs['Color'],
+                node_mix_1.inputs[2],
             )
             self._links.new(
                 nodes_tex_uniq['Albedo'].outputs['Color'],
-                node_mix_1.inputs['Color1'],
+                node_mix_1.inputs[0],
             )
             self._links.new(
                 node_tex.outputs['Color'],
-                node_mix_1.inputs['Color2'],
+                node_mix_1.inputs[1],
             )
 
             self._links.new(
                 node_mask.outputs['Color'],
-                node_mix_2.inputs['Color'],
+                node_mix_2.inputs[2],
             )
             self._links.new(
                 nodes_tex_uniq['Metallic'].outputs['Color'],
-                node_mix_2.inputs['Color1'],
+                node_mix_2.inputs[0],
             )
             self._links.new(
                 node_tex.outputs['Alpha'],
-                node_mix_2.inputs['Color2'],
+                node_mix_2.inputs[1],
             )
 
             nodes_tex_uniq['Albedo'] = node_mix_1
             nodes_tex_uniq['Metallic'] = node_mix_2
             return
         
+        node_normal = self._get_node_normal(
+            node_tex,
+            origin,
+        )
+        
         self._links.new(
             node_mask.outputs['Color'],
-            node_mix_2.inputs['Color'],
+            node_mix_2.inputs[2],
         )
         self._links.new(
-            nodes_tex_uniq['Normal'].outputs['Color'],
-            node_mix_2.inputs['Color1'],
+            nodes_tex_uniq['Normal'].outputs[0],
+            node_mix_2.inputs[0],
         )
         self._links.new(
-            node_tex.outputs['Color'],
-            node_mix_2.inputs['Color2'],
+            node_normal.outputs['Normal'],
+            node_mix_2.inputs[1],
         )
 
         self._links.new(
             node_mask.outputs['Color'],
-            node_mix_1.inputs['Color'],
+            node_mix_1.inputs[2],
         )
         self._links.new(
             nodes_tex_uniq['Roughness'].outputs['Color'],
-            node_mix_1.inputs['Color1'],
+            node_mix_1.inputs[0],
         )
         self._links.new(
             node_tex.outputs['Alpha'],
-            node_mix_1.inputs['Color2'],
+            node_mix_1.inputs[1],
         )
 
         nodes_tex_uniq['Roughness'] = node_mix_1
         nodes_tex_uniq['Normal'] = node_mix_2
-        node_tex.image.colorspace_settings.name = 'Non-Color'
 
     
     def _get_node_mask(
@@ -257,6 +288,8 @@ class Material:
         origin_block_a = [-900, 850]
         origin_block_n = [-900, -750]
 
+        nodes_tex_uniq['Normal'] =\
+            self._get_nodes_by_type('NORMAL_MAP')[0]
         for index in range(4):
             node_mask = self._get_node_mask(
                 is_masks_texture,
@@ -290,8 +323,6 @@ class Material:
         
     def _set_links_shader(self, nodes_outputs: dict):
         node_shader = self._get_nodes_by_type('BSDF_PRINCIPLED')[0]
-        node_normal = self._get_nodes_by_type('NORMAL_MAP')[0]
-
         self._links.new(
             nodes_outputs['Albedo'].outputs['Color'],
             node_shader.inputs['Base Color'],
@@ -305,9 +336,20 @@ class Material:
             node_shader.inputs['Roughness']
         )
         self._links.new(
-            nodes_outputs['Normal'].outputs['Color'],
-            node_normal.inputs['Color']
+            nodes_outputs['Normal'].outputs['Vector'],
+            node_shader.inputs['Normal']
         )
+
+
+    def fix_tex_uniq_color_space(self):
+        nodes_tex = self._get_nodes_by_type('TEX_IMAGE')
+        for node in nodes_tex:
+            if "albedo" in node.image.name.lower():
+                continue
+            
+            node.image.colorspace_settings.name = 'Non-Color'
+
+        return self
 
     
     def set_tex_tile(

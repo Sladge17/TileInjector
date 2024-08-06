@@ -7,11 +7,13 @@ from executor import MATERIAL_OT_tile_injector
 from interface import VIEW3D_PT_tile_injector
 
 from group_mix_by_color import Group_MixByColor
+from group_mix_by_intensity_n import Group_MixByIntensity_N
 
 
 
 def set_environment():
     Group_MixByColor.set_group()
+    Group_MixByIntensity_N.set_group()
 
 
 def register():
@@ -32,7 +34,7 @@ def unregister():
 bl_info = {
     "name": "Tile Injector",
     "author": "Sosov Maxim",
-    "version": (1, 0),
+    "version": (2, 0),
     "blender": (3, 3, 0),
     "category": "Material",
     "location": "View3D > UI > MaterialHelpers",
