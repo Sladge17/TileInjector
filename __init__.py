@@ -8,12 +8,14 @@ from interface import VIEW3D_PT_tile_injector
 
 from group_mix_by_color import Group_MixByColor
 from group_mix_by_intensity_n import Group_MixByIntensity_N
+from group_color2midfloat import Group_Color2MidFloat
 
 
 
 def set_environment():
     Group_MixByColor.set_group()
     Group_MixByIntensity_N.set_group()
+    Group_Color2MidFloat.set_group()
 
 
 def register():

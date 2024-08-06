@@ -2,6 +2,7 @@ import bpy
 
 from group_mix_by_color import Group_MixByColor
 from group_mix_by_intensity_n import Group_MixByIntensity_N
+from group_color2midfloat import Group_Color2MidFloat
 
 
 
@@ -327,14 +328,33 @@ class Material:
             nodes_outputs['Albedo'].outputs['Color'],
             node_shader.inputs['Base Color'],
         )
+        
+        node_color2float_1 = Group_Color2MidFloat.get_group(
+            self._material.name,
+            (node_shader.location[0] - 200, node_shader.location[1] - 100)
+        )
         self._links.new(
             nodes_outputs['Metallic'].outputs['Color'],
+            node_color2float_1.inputs[0]
+        )
+        self._links.new(
+            node_color2float_1.outputs[0],
             node_shader.inputs['Metallic']
+        )
+        
+        node_color2float_2 = Group_Color2MidFloat.get_group(
+            self._material.name,
+            (node_shader.location[0] - 200, node_shader.location[1] - 400)
         )
         self._links.new(
             nodes_outputs['Roughness'].outputs['Color'],
+            node_color2float_2.inputs[0]
+        )
+        self._links.new(
+            node_color2float_2.outputs[0],
             node_shader.inputs['Roughness']
         )
+
         self._links.new(
             nodes_outputs['Normal'].outputs['Vector'],
             node_shader.inputs['Normal']
