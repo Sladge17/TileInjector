@@ -3,6 +3,7 @@ from enum import Enum
 
 
 class Inputs(Enum):
+    slot_0 = "1"
     label_0 = "Tile 1"
     albedo_texture_0 = "Path albedo texture 1"
     is_preview_albedo_0 = "Preview albedo 1"
@@ -13,6 +14,7 @@ class Inputs(Enum):
     is_preview_mask_0 = "Preview mask 1"
     scale_mask_0 = "Scale mask 1"
 
+    slot_1 = "2"
     label_1 = "Tile 2"
     albedo_texture_1 = "Path albedo texture 2"
     is_preview_albedo_1 = "Preview albedo 2"
@@ -23,6 +25,7 @@ class Inputs(Enum):
     is_preview_mask_1 = "Preview mask 2"
     scale_mask_1 = "Scale mask 2"
 
+    slot_2 = "3"
     label_2 = "Tile 3"
     albedo_texture_2 = "Path albedo texture 3"
     is_preview_albedo_2 = "Preview albedo 3"
@@ -33,6 +36,7 @@ class Inputs(Enum):
     is_preview_mask_2 = "Preview mask 3"
     scale_mask_2 = "Scale mask 3"
 
+    slot_3 = "4"
     label_3 = "Tile 4"
     albedo_texture_3 = "Path albedo texture 4"
     is_preview_albedo_3 = "Preview albedo 4"

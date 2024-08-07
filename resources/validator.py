@@ -52,11 +52,11 @@ class Validator:
             if not cls._check_texture(
                 abspath(path_albedo),
                 field,
-                slot,
+                getattr(Inputs, f"slot_{slot}").value,
             ) or not cls._check_texture(
                 abspath(cls._get_path_normal(path_albedo)),
                 field,
-                slot,
+                getattr(Inputs, f"slot_{slot}").value,
             ):
                 return None
 
@@ -99,8 +99,11 @@ class Validator:
 
             path_mask =\
                 abspath(getattr(context.scene.tile_injector, f"mask_texture_{slot}"))
-            field = getattr(Inputs, f"mask_texture_{slot}").value
-            if not cls._check_texture(path_mask, field, slot):
+            if not cls._check_texture(
+                path_mask,
+                getattr(Inputs, f"mask_texture_{slot}").value,
+                getattr(Inputs, f"slot_{slot}").value,
+            ):
                 return None
             
             masks[slot] = path_mask
