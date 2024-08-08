@@ -14,8 +14,10 @@ from .node_groups import (
 
 
 class MATERIAL_OT_tile_injector(Operator):
-    bl_idname = 'material.tile_injector'
-    bl_label = 'Tile Injector'
+    bl_idname = "material.tile_injector"
+    bl_label = "Tile Injector"
+    bl_description = "Creating tiled material"
+    bl_options = {'UNDO'}
 
 
     @classmethod
